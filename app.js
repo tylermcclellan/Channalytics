@@ -9,6 +9,15 @@ console.log(`Client ID: ${clientID}`)
 const clientSecret = process.env.SLACK_CLIENT_SECRET
 console.log(`Client Secret: ${clientSecret}`)
 
+//Helper functions
+const findChannel = i => i.name === channelSelection
+const filterUsers = i => {
+  !i.is_bot &&
+  i.real_name !== undefined && 
+  selectedChannel.members.includes(i.id)
+}
+
+
 //create web client
 const web = new WebClient(verifyToken)
 console.log("Created new WebClient")
@@ -28,38 +37,19 @@ const userMaster = async () => {
 
 let u = userMaster()
 
-function createUserObject(web){
+const createUserObject(web) = async () => {
   //get channels
-  return web.channels.list() 
-    .then((res) => {
-      //find channels selection
-      return res.channels.find( i => i.name === channelSelection)
-    })
-    .catch(console.error)
-    .then(channel => {
-      //got selected channel, get list of users
-      console.log(channel)
-      return web.users.list()
-        .then(users => {
-          //got list of users, filter for wanted users
-          return users.members.filter(
-            i => !i.is_bot &&
-            i.real_name !== undefined && 
-            channel.members.includes(i.id)
-          )
-        })
-        .catch(console.error)
-    })
-    .catch(console.error)
-    .then(users => {
-      //create object from all users
-      return users.reduce((accumulator, currentValue) => {
-        accumulator[currentValue.real_name] = currentValue
-        //console.log(accumulator)
-        return accumulator
-      }, {})
-    })
-    .catch(console.error)
+  const channels = await web.channels.list() 
+  const selectedChannel = channels.find(findChannel)
+  //console.log(channel)
+  const userList = await web.users.list()
+  userList.members.filter(filterUsers)
+  const obj = userList.reduce((accumulator, currentValue) => {
+    accumulator[currentValue.real_name] = currentValue
+    //console.log(accumulator)
+    return accumulator
+  }, {})
+  return obj
 }
 
 /*
