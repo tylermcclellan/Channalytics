@@ -12,36 +12,38 @@ console.log(`Client Secret: ${clientSecret}`)
 //create web client
 const web = new WebClient(verifyToken)
 console.log("Created new WebClient")
-const channelSelection = 'hax'
+const channelSelection = 'general'
 
 //get channels
-const channels = web.channels.list() 
+web.channels.list() 
   .then((res) => {
     //find channels selection
-    console.log("Finding channel\n")
     return res.channels.find( i => i.name === channelSelection)
   })
   .catch(console.error)
   .then(channel => {
     //got selected channel, get list of users
-    console.log("Got channel. Getting users\n")
     console.log(channel)
     return web.users.list()
       .then(users => {
         //got list of users, filter for wanted users
-        console.log("Got users. Filtering\n")
-        return users.members.filter( i => i != undefined && channel.members.includes(i.id))
+        return users.members.filter(
+          i => !i.is_bot &&
+          i.real_name !== undefined && 
+          channel.members.includes(i.id)
+        )
       })
       .catch(console.error)
   })
   .catch(console.error)
   .then(users => {
-    users = users.filter( u => u != undefined)
-    users.forEach( i => console.log(i.real_name))
+    //create object from all users
+    return users.reduce((accumulator, currentValue) => {
+      accumulator[currentValue.real_name] = currentValue
+      console.log(accumulator)
+    }, {})
   })
   .catch(console.error)
-
-
 
 
 
