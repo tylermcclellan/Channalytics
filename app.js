@@ -12,40 +12,55 @@ console.log(`Client Secret: ${clientSecret}`)
 //create web client
 const web = new WebClient(verifyToken)
 console.log("Created new WebClient")
-const channelSelection = 'general'
+const channelSelection = 'hax'
 
-//get channels
-web.channels.list() 
-  .then((res) => {
-    //find channels selection
-    return res.channels.find( i => i.name === channelSelection)
-  })
-  .catch(console.error)
-  .then(channel => {
-    //got selected channel, get list of users
-    console.log(channel)
-    return web.users.list()
-      .then(users => {
-        //got list of users, filter for wanted users
-        return users.members.filter(
-          i => !i.is_bot &&
-          i.real_name !== undefined && 
-          channel.members.includes(i.id)
-        )
-      })
-      .catch(console.error)
-  })
-  .catch(console.error)
-  .then(users => {
-    //create object from all users
-    return users.reduce((accumulator, currentValue) => {
-      accumulator[currentValue.real_name] = currentValue
-      console.log(accumulator)
-    }, {})
-  })
-  .catch(console.error)
+const userMaster = async () => {
+  try {
+    console.log("In async function")
+    const u = await createUserObject(web)
+    console.log("Printing user object to console")
+    console.log(u["Tyler McClellan"])
+    return u
+  } catch(e) {
+    console.log("ahhhh, got an error dude")
+  }
+}
 
+let u = userMaster()
 
+function createUserObject(web){
+  //get channels
+  return web.channels.list() 
+    .then((res) => {
+      //find channels selection
+      return res.channels.find( i => i.name === channelSelection)
+    })
+    .catch(console.error)
+    .then(channel => {
+      //got selected channel, get list of users
+      console.log(channel)
+      return web.users.list()
+        .then(users => {
+          //got list of users, filter for wanted users
+          return users.members.filter(
+            i => !i.is_bot &&
+            i.real_name !== undefined && 
+            channel.members.includes(i.id)
+          )
+        })
+        .catch(console.error)
+    })
+    .catch(console.error)
+    .then(users => {
+      //create object from all users
+      return users.reduce((accumulator, currentValue) => {
+        accumulator[currentValue.real_name] = currentValue
+        //console.log(accumulator)
+        return accumulator
+      }, {})
+    })
+    .catch(console.error)
+}
 
 /*
  * 1. Get tokens
