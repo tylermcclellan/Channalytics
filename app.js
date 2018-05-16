@@ -18,11 +18,18 @@ const filterUsers = selectedChannel => i => {
   i.real_name !== undefined && 
   selectedChannel.members.includes(i.id)
 }
+const filterMessages = () => {
+  return /<.*>|[^A-Za-z]|\bbe\b|\bfor\b|\bwith\b|\bhas\b|\bthe\b|\ba\b|\bi\b|\bI\b|\bon\b|\bto\b|\byou\b|\band\b|\bive\b|\bof\b|\bwhat\b|\bit\b|\bthat\b|\bthis\b|\bis\b|\bhe\b|\bher\b|\bshe\b|\bhe\b|\bin\b|\bwas\b/g
+}
+const filterEmpty = i => i !== '' && !i.includes('http') && i.length > 1
 
 //create web client
 const web = new WebClient(verifyToken)
 console.log("Created new WebClient")
 const channelSelection = 'random'
+
+//Setup and Helpers ^^^^
+//////////////////////////////////////////////////////////////
 
 //Selects channel identified above ^^
 const getSelectedChannel = async (web) => {
@@ -64,9 +71,9 @@ const readConversation = async (web, u) => {
       let words = message.text.split(" ")
       words = words.map(item => {
         item = item.toLowerCase()
-        return item.replace(/<.*>|[^A-Za-z]|\bwith\b|\bhas\b|\bthe\b|\ba\b|\bi\b|\bI\b|\bon\b|\bto\b|\byou\b|\band\b|\bive\b|\bof\b|\bwhat\b|\bit\b|\bthat\b|\bthis\b|\bis\b|\bhe\b|\bher\b|\bshe\b|\bhe\b|\bin\b|\bwas\b/g, '')
+        return item.replace(filterMessages(), '')
       })
-      words = words.filter( i => i !== '' && !i.includes('http'))
+      words = words.filter(filterEmpty)
       u[message.user].numMessages += 1
       totalMessages += 1
       words.forEach( word => {
@@ -130,8 +137,10 @@ const displayResults = u => {
       console.log("--" + u[user].real_name + "--")
       console.log("Messages: " + u[user].numMessages)
       console.log("Words: " + u[user].numWords)
-      console.log("Avg Msg Length: " + round(u[user].numWords/u[user].numMessages, 2) + " words")
-      console.log("% of Total Messages: " + round(u[user].numMessages/totalMessages*100, 2) + "%")
+      console.log("Avg Msg Length: " + 
+        round(u[user].numWords/u[user].numMessages, 2) + " words")
+      console.log("% of Total Messages: " + 
+        round(u[user].numMessages/totalMessages*100, 2) + "%")
       console.log("Unique Words: " + u[user].uniqueWords + "\n")
     })
 }
@@ -151,16 +160,3 @@ const userMaster = async (web) => {
 
 
 let u = userMaster(web, totalWords, totalMessages)
-
-/*
- * 1. Get tokens
- * 2. Create Web Client
- * 3. Get selected channel
- * 4. Get all users
- * 5. Filter out users not in channel
- * 6. Combine user objects into shared object so they can be referred to by key
- * 7. Retrieve messages
- * 8. Process messages
- * 9. Display
- *
- */
