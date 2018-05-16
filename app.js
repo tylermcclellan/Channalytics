@@ -22,7 +22,7 @@ const filterUsers = selectedChannel => i => {
 //create web client
 const web = new WebClient(verifyToken)
 console.log("Created new WebClient")
-const channelSelection = 'general'
+const channelSelection = 'random'
 
 //Selects channel identified above ^^
 const getSelectedChannel = async (web) => {
@@ -60,7 +60,7 @@ const readConversation = async (web, u) => {
   })
   channelConvo.messages.forEach( message => {
     if (message.type === 'message' && u[message.user] !== undefined) {
-      console.log(u[message.user].real_name + ": " + message.text)
+      //console.log(u[message.user].real_name + ": " + message.text)
       let words = message.text.split(" ")
       words = words.map(item => {
         item = item.toLowerCase()
@@ -120,15 +120,28 @@ const analyze = (u) => {
   })
 }
 
+const round = (value, decimals) => {
+  return Number(Math.round(value+'e'+decimals)+'e-'+decimals)
+}
+
+const displayResults = u => {
+    console.log("\nRESULTS\n")
+    Object.keys(u).forEach( user => {
+      console.log("--" + u[user].real_name + "--")
+      console.log("Messages: " + u[user].numMessages)
+      console.log("Words: " + u[user].numWords)
+      console.log("Avg Msg Length: " + round(u[user].numWords/u[user].numMessages, 2) + " words")
+      console.log("% of Total Messages: " + round(u[user].numMessages/totalMessages*100, 2) + "%")
+      console.log("Unique Words: " + u[user].uniqueWords + "\n")
+    })
+}
+
 const userMaster = async (web) => {
   try {
     let u = await createUserObject(web)
     u  = await readConversation(web, u)
     await analyze(u)
-    console.log("\nUNIQUE WORDS\n")
-    Object.keys(u).forEach( user => {
-      console.log(u[user].real_name + ": " + u[user].uniqueWords)
-    })
+    displayResults(u)
     return u
   } catch(e) {
     console.log(e)
