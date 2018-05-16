@@ -12,7 +12,9 @@ let totalMessages = 0
 let totalWords = {}
 
 //Helper functions
-const findChannel = i => i.name === channelSelection
+const findChannel = channel => i => {
+  return i.name === channel
+}
 const filterUsers = selectedChannel => i => {
   return !i.is_bot &&
   i.real_name !== undefined && 
@@ -23,25 +25,29 @@ const filterMessages = () => {
 }
 const filterEmpty = i => i !== '' && !i.includes('http') && i.length > 1
 
-//create web client
-const web = new WebClient(verifyToken)
-console.log("Created new WebClient")
 const channelSelection = 'random'
+
+//create web client
+const createWebClient = verificationToken => {
+  const web = new WebClient(verifyToken)
+  console.log("Created new WebClient")
+  return web
+}
 
 //Setup and Helpers ^^^^
 //////////////////////////////////////////////////////////////
 
 //Selects channel identified above ^^
-const getSelectedChannel = async (web) => {
+const getSelectedChannel = async (web, channel='general') => {
   const response = await web.channels.list() 
-  const selectedChannel = response.channels.find(findChannel)
+  const selectedChannel = response.channels.find(findChannel(channel))
   return selectedChannel
 }
 
 //Creates master user object
-const createUserObject = async (web) => {
+const createUserObject = async (web, channel) => {
   //get channels
-  const selectedChannel = await getSelectedChannel(web)
+  const selectedChannel = await getSelectedChannel(web, channel)
   const userList = await web.users.list()
   const filteredUsers = userList.members.filter(filterUsers(selectedChannel))
   const userObject = filteredUsers.reduce((accumulator, currentValue) => {
@@ -68,12 +74,12 @@ const cleanMessage = message => {
 //Reads through the messages in a channel,
 //adds them to the user object, and returns
 //the user object
-const readConversation = async (web, u) => {
+const readConversation = async (web, u, limit=1000) => {
   const channel = await getSelectedChannel(web)
   const conversationID = channel.id
   const channelConvo = await web.conversations.history({ 
     channel: conversationID,
-    limit: 1000
+    limit: limit
   })
   channelConvo.messages.forEach( message => {
     if (message.type === 'message' && u[message.user] !== undefined) {
@@ -149,9 +155,10 @@ const displayResults = u => {
     })
 }
 
-const userMaster = async (web) => {
+const run = async (verificationToken, channel) => {
   try {
-    let u = await createUserObject(web)
+    const web = createWebClient(verificationToken)
+    let u = await createUserObject(web, channel)
     u  = await readConversation(web, u)
     await analyze(u)
     displayResults(u)
@@ -163,4 +170,4 @@ const userMaster = async (web) => {
 
 
 
-let u = userMaster(web, totalWords, totalMessages)
+let u = run(verifyToken, channelSelection)
