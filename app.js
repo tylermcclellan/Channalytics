@@ -55,6 +55,16 @@ const createUserObject = async (web) => {
   return userObject
 }
 
+const cleanMessage = message => {
+  let words = message.text.split(" ")
+  words = words.map(item => {
+  item = item.toLowerCase()
+    return item.replace(filterMessages(), '')
+  })
+  words = words.filter(filterEmpty)
+  return words
+}
+
 //Reads through the messages in a channel,
 //adds them to the user object, and returns
 //the user object
@@ -68,12 +78,7 @@ const readConversation = async (web, u) => {
   channelConvo.messages.forEach( message => {
     if (message.type === 'message' && u[message.user] !== undefined) {
       //console.log(u[message.user].real_name + ": " + message.text)
-      let words = message.text.split(" ")
-      words = words.map(item => {
-        item = item.toLowerCase()
-        return item.replace(filterMessages(), '')
-      })
-      words = words.filter(filterEmpty)
+      let words = cleanMessage(message)
       u[message.user].numMessages += 1
       totalMessages += 1
       words.forEach( word => {
@@ -97,7 +102,8 @@ const readConversation = async (web, u) => {
 }
 
 const uniqueness = (word, user) => {
-  const unique =  (Math.pow(user.words[word], 2)/totalWords[word])*(totalMessages/user.numMessages)
+  const unique = 
+    (Math.pow(user.words[word], 2)/totalWords[word])*(totalMessages/user.numMessages)
   return unique
 }
 
@@ -115,13 +121,11 @@ const analyze = (u) => {
         u[user].uniqueWords.push(word)
         uniqueValues.push(unique)
       //uniqueWords is full, so replace min in unique words and unique values arrays
-      } else {
-        if (unique > Math.min(...uniqueValues)) {
-          u[user].uniqueWords[uniqueValues.findIndex(index => {
-            return index === Math.min(...uniqueValues)})] = word
-          uniqueValues[uniqueValues.findIndex(index => {
-            return index === Math.min(...uniqueValues)})] = unique
-        }
+      } else if (unique > Math.min(...uniqueValues)) {
+        u[user].uniqueWords[uniqueValues.findIndex(index => {
+          return index === Math.min(...uniqueValues)})] = word
+        uniqueValues[uniqueValues.findIndex(index => {
+          return index === Math.min(...uniqueValues)})] = unique
       }
     })
   })
