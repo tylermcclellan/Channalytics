@@ -22,7 +22,7 @@ const filterUsers = selectedChannel => i => {
 //create web client
 const web = new WebClient(verifyToken)
 console.log("Created new WebClient")
-const channelSelection = 'hax'
+const channelSelection = 'general'
 
 //Selects channel identified above ^^
 const getSelectedChannel = async (web) => {
@@ -60,44 +60,41 @@ const readConversation = async (web, u) => {
   })
   channelConvo.messages.forEach( message => {
     if (message.type === 'message' && u[message.user] !== undefined) {
-      //console.log(u[message.user].real_name + ": " + message.text)
+      console.log(u[message.user].real_name + ": " + message.text)
       let words = message.text.split(" ")
-      u[message.user].numMessages++
-      totalMessages++
+      words = words.map(item => {
+        item = item.toLowerCase()
+        return item.replace(/<.*>|[^A-Za-z]|\bwith\b|\bhas\b|\bthe\b|\ba\b|\bi\b|\bI\b|\bon\b|\bto\b|\byou\b|\band\b|\bive\b|\bof\b|\bwhat\b|\bit\b|\bthat\b|\bthis\b|\bis\b|\bhe\b|\bher\b|\bshe\b|\bhe\b|\bin\b|\bwas\b/g, '')
+      })
+      words = words.filter( i => i !== '' && !i.includes('http'))
+      u[message.user].numMessages += 1
+      totalMessages += 1
       words.forEach( word => {
-        word = word.toLowerCase()
-        word = word.replace(/[^a-z]/g, '')
         if (u[message.user].words[word] === undefined) {
           u[message.user].words[word] = 1
         } else {
-          u[message.user].words[word]++
+          u[message.user].words[word] += 1
         }
         if (totalWords[word] === undefined) {
           totalWords[word] = 1
         } else {
-          totalWords[word]++
+          totalWords[word] += 1
         }
-        u[message.user].numWords++
+        u[message.user].numWords += 1
       })
     }
   })
-  console.log("Total Words: " + totalWords)
+  console.log("Total Words: " + Object.keys(totalWords).length)
   console.log("Total Messages: " + totalMessages)
   return u
 }
 
 const uniqueness = (word, user) => {
-  /*
-  console.log("Word: " + word)
-  console.log("User: " + user.real_name)
-  console.log("Total Words: " + totalWords)
-  console.log("Total Messages: " + totalMessages)
-  */
-  return (Math.pow(user.words[word], 2)/totalWords[word])*(totalMessages/user.numMessages)
+  const unique =  (Math.pow(user.words[word], 2)/totalWords[word])*(totalMessages/user.numMessages)
+  return unique
 }
 
 const analyze = (u) => {
-  //calculate uniqueness value
   const users = Object.keys(u)
   //loop for each user
   users.forEach( user => {
@@ -106,23 +103,20 @@ const analyze = (u) => {
     //loop for each word
     userWords.forEach( word => {
       const unique = uniqueness(word, u[user], totalWords, totalMessages)
-      //console.log("Unique: " + unique)
       //if uniqueWords array isn't full
       if (u[user].uniqueWords.length < 5) {
-        //console.log("Setting " + u[user].real_name + "'s unique array")
         u[user].uniqueWords.push(word)
         uniqueValues.push(unique)
       //uniqueWords is full, so replace min in unique words and unique values arrays
-      } else if (unique > Math.min(uniqueValues)) {
-        //console.log("Updating " + u[user].real_name + "'s unique array")
-        u[user].uniqueWords[uniqueValues.findIndex(index => {
-          return index === Math.min(uniqueValues)})] = word
-        uniqueValues[uniqueValues.findIndex(index => {
-          return index === Math.min(uniqueValues)})] = unique
+      } else {
+        if (unique > Math.min(...uniqueValues)) {
+          u[user].uniqueWords[uniqueValues.findIndex(index => {
+            return index === Math.min(...uniqueValues)})] = word
+          uniqueValues[uniqueValues.findIndex(index => {
+            return index === Math.min(...uniqueValues)})] = unique
+        }
       }
     })
-    console.log(u[user].real_name + "'s unique array: " + u[user].uniqueWords)
-    console.log(u[user].real_name + "'s unique values: " + uniqueValues)
   })
 }
 
