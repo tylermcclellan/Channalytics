@@ -10,7 +10,7 @@ export class MainController extends React.Component {
   }
   
   render() {
-    //const defaultRoute = !this.state.authed ? '/working' : '/login'
+    const defaultRoute = !this.state.authed ? '/working' : '/login'
     return (
       <Switch>
         <Route exact path='/working' component={WorkingPage} />
