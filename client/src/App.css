@@ -1,0 +1,42 @@
+.App {
+  font-family: 'Roboto Mono', monospace;
+}
+
+.App-header {
+  background-color: #222;
+  height: 150px;
+  padding: 20px;
+  color: white;
+}
+
+.ChannelList {
+  background-color: #333333;
+  color: white;
+  padding-left: 20px;
+  height: 100%;
+}
+
+.ChannelListItem {
+  cursor: pointer !important;
+}
+
+.ChannelListTitle {
+  padding-top: 10px;
+  align-text: center;
+}
+
+.sidebar {
+  float: left !important;
+  height: 100% !important;
+}
+
+#main {
+  height: 100% !important;
+}
+
+.HomePage {
+  font-family: 'Roboto Mono', monospace;
+  padding: 20px;
+  align-text: center;
+  height: 100% !important;
+}

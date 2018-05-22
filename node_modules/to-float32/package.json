@@ -1,0 +1,26 @@
+{
+  "name": "to-float32",
+  "version": "1.0.0",
+  "description": "Convert data to float32 array or get float32 fractions",
+  "main": "index.js",
+  "scripts": {
+    "test": "node test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/dfcreative/to-float32.git"
+  },
+  "keywords": [
+    "float32",
+    "fract32",
+    "webgl"
+  ],
+  "author": "Dmitry Yv. <dfcreative@gmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/dfcreative/to-float32/issues"
+  },
+  "homepage": "https://github.com/dfcreative/to-float32#readme",
+  "dependencies": {
+  }
+}
