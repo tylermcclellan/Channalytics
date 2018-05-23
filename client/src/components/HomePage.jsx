@@ -7,12 +7,13 @@ class HomePage extends React.Component {
       <Jumbotron className='HomePage'>
         <h1>Channalytics</h1>
         <p>A Slack app for numberphiles.</p>
-        <a href="https://slack.com/oauth/authorize?scope=identity.basic,identity.team&client_id=4845121638.361800582950">
+        <a href={`https://slack.com/oauth/authorize?client_id=${this.props.clientId}&scope=channels%3Aread,channels%3Ahistory,users%3Aread`}>
           <img 
-            alt="Sign in with Slack" 
+            alt="Add to Slack" 
             height="40" 
-            width="172" 
-            src="https://platform.slack-edge.com/img/sign_in_with_slack.png" />
+            width="139" 
+            src="https://platform.slack-edge.com/img/add_to_slack.png" 
+          />
         </a>
       </Jumbotron>
     )

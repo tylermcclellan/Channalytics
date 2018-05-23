@@ -11,7 +11,7 @@ import ChannelMain from './ChannelMain'
 import '../App.css'
 
 
-class WorkingPage extends React.Component {
+class Dashboard extends React.Component {
   constructor(props) {
     super(props)
     this.state = { 
@@ -21,7 +21,6 @@ class WorkingPage extends React.Component {
       words: {},
       numWords: 0,
       avgLength: 0,
-      channels: [],
       channelList: [],
       chart: {},
       messages: 0,
@@ -82,9 +81,9 @@ class WorkingPage extends React.Component {
   }
 
   async componentWillMount() {
+    console.log('getting users')
     const u = await this.getUsers(this.state.currentChannel)
     const c = await this.getChannels()
-    const cList = c.map(channel => channel.name)
     const chart = this.initChart(u.users)
     const numWords = Object.keys(u.totalWords).length
     this.setState({ 
@@ -94,8 +93,7 @@ class WorkingPage extends React.Component {
       numWords: numWords,
       messages: u.totalMessages,
       avgLength: (numWords/u.totalMessages),
-      channels: c,
-      channelList: cList,
+      channelList: c,
       chart: chart,
     })
   }
@@ -105,14 +103,14 @@ class WorkingPage extends React.Component {
     return (
       <div className='App'>
         <PageHeader>Channalytics <small>{this.state.currentChannel}</small></PageHeader>
-        <Grid>
+        <Grid fluid={true}>
           <Row>
             <Col md={2} lg={2} className='sidebar'>
               <ChannelList 
                 channels={this.state.channelList} 
                 handleClick={this.handleChannelClick}/>
             </Col>
-            <Col md={10} lg={10}>
+            <Col md={8} lg={8}>
               <ChannelMain
                 names={this.state.chart.names} 
                 numbers={this.state.chart.numbers} 
@@ -129,4 +127,4 @@ class WorkingPage extends React.Component {
   }
 }
 
-export default WorkingPage
+export default Dashboard

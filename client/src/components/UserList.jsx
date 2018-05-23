@@ -39,14 +39,16 @@ class UserList extends React.Component {
     const userList = this.createUserList()
     return (
       <Grid>
-        <Row mdPull={2} lgPull={2}>
-          <Col md={3} mdPush={1} lg={3} lgPush={1}><b>User</b></Col>
+        <Row mdpull={2} lgpull={2}>
+          <Col md={3} mdpush={1} lg={3} lgpush={1}><b>User</b></Col>
           <Col md={1} lg={1}><b>Percentage</b></Col>
           <Col md={1} lg={1}><b>Messages</b></Col>
           <Col md={1} lg={1}><b>Words</b></Col>
-          <Col md={3} lg={3}><b>Unique Words</b></Col>
+          <Col md={2} lg={2}><b>Unique Words</b></Col>
         </Row>
-        <ListGroup>{userList}</ListGroup>
+        <Row>
+          <ListGroup>{userList}</ListGroup>
+        </Row>
       </Grid>
     )
   }

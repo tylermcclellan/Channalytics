@@ -28,6 +28,7 @@
 .sidebar {
   float: left !important;
   height: 100% !important;
+  min-height: 100%;
 }
 
 #main {
@@ -39,4 +40,11 @@
   padding: 20px;
   align-text: center;
   height: 100% !important;
+  background-color: #eee;
 }
+
+html, #root, body{
+  height: 100%;
+  min-height: 100%;
+}
+

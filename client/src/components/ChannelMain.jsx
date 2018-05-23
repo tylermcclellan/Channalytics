@@ -8,7 +8,7 @@ class ChannelMain extends React.Component {
   render() {
     return (
       <Row>
-        <Col md={9} lg={9}>
+        <Col md={6} lg={6}>
           <PieChart names={this.props.names} numbers={this.props.numbers}/ >
         </Col>
         <Col md={3} lg={3}>

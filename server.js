@@ -5,12 +5,14 @@ const dotenv = require('dotenv').config(),
   SlackStrategy = require('passport-slack-oauth2').Strategy,
   express = require('express'),
   app = express(),
-  slack = require('./slack')
-//Constant Globals
-const PORT = process.env.PORT || 5000
+  slack = require('./local/slack')
+
+//Globals
+const PORT = 5000
 const CLIENT_ID = process.env.CLIENT_ID
 const CLIENT_SECRET = process.env.CLIENT_SECRET
 let accessCode = ''
+let authed = false
 
 //Slack Authentication Setup
 passport.use(new SlackStrategy({
@@ -19,37 +21,52 @@ passport.use(new SlackStrategy({
 }, (accessToken, refreshToken, profile, done) => {
   console.log('Access Token: ' + accessToken)
   accessCode = accessToken
+  //slack.init(accessToken)
   done(null, profile)
   }
 ))
 app.use(require('body-parser').urlencoded({ extended: true }))
 app.use(passport.initialize())
 
+//Middleware
 const asyncRun = async (req, res, next) => {
-  const u = await slack.run(process.env.SLACK_TOKEN, req.params.channelName)
+  let u = undefined
+  const initialized = slack.initialized()
+  if (initialized){
+    u = await slack.getUserObject(req.params.channelName)
+  } else {
+    u = await slack.init(accessCode, req.params.channelName)
+  }
   req.data = u
   next()
 }
 
 const asyncChannels = async (req, res, next) => {
-  const channels = await slack.getChannels(process.env.SLACK_TOKEN)
+  const channels = await slack.getChannelNames()
   req.data = channels
   next()
 }
 
+//Routes
 //path to start OAuth flow
 app.get('/auth/slack/', passport.authorize('Slack'))
 
 //OAuth callback url
 app.get('/auth/slack/callback',
   passport.authorize('Slack', { failureRedirect: '/login' }),
-  async (req, res) => {
-    console.log('successfully reached callback function')
-    //console.log(res)
-    res.json(req.user)
-  })
+  (req, res) => {
+    console.log('in callback')
+    authed = true
+    res.redirect('http://localhost:3000/#/dashboard')
+  }
+)
 
-app.get('/api/run/:channelName', asyncRun,  (req, res) => {
+app.get('/#/dashboard', (req, res) => {
+  console.log('in redirect')
+  res.end
+})
+
+app.get('/api/run/:channelName', asyncRun, (req, res) => {
   console.log("Returning user object")
   res.send(req.data)
 })
@@ -57,6 +74,14 @@ app.get('/api/run/:channelName', asyncRun,  (req, res) => {
 app.get('/api/channels/', asyncChannels, (req, res) => {
   console.log("Returning channel object")
   res.send(req.data)
+})
+
+app.get('/api/authed/', (req, res) => {
+  res.send(authed)
+})
+
+app.get('/api/client/', (req, res) => {
+  res.send({ id: CLIENT_ID })
 })
 
 app.listen(PORT, () => console.log(`Listening on port ${PORT}`))
