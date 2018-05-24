@@ -1,13 +1,12 @@
 import React from 'react'
 import { 
-  PageHeader,
   Grid,
   Row,
   Col
 } from 'react-bootstrap'
 import ChannelList from './ChannelList'
-import UserList from './UserList'
-import ChannelMain from './ChannelMain'
+import PageBody from './PageBody'
+import Header from './Header'
 import '../App.css'
 
 
@@ -61,23 +60,21 @@ class Dashboard extends React.Component {
   }
 
   async handleChannelClick(e) {
-    if (!this.state.isLoading){
-      console.log(`e.target: ${e.target.innerHTML}`)
-      const channel = e.target.innerHTML
-      const u = await this.getUsers(channel)
-      const chart = this.initChart(u.users)
-      const numWords = Object.keys(u.totalWords).length
-      this.setState({ 
-        users: u.users,
-        numUsers: Object.keys(u.users).length,
-        words: u.totalWords,
-        numWords: numWords,
-        messages: u.totalMessages,
-        avgLength: (numWords/u.totalMessages),
-        currentChannel: channel,
-        chart: chart,
-      })
-    }
+    console.log(`e.target: ${e.target.innerHTML}`)
+    const channel = e.target.innerHTML
+    console.log('getting channel' + channel)
+    const u = await this.getUsers(channel)
+    const chart = this.initChart(u.users)
+    this.setState({ 
+      users: u.users,
+      numUsers: Object.keys(u.users).length,
+      words: u.totalWords,
+      numWords: u.totalWordCount,
+      messages: u.totalMessages,
+      avgLength: (u.totalWordCount/u.totalMessages),
+      currentChannel: channel,
+      chart: chart,
+    })
   }
 
   async componentWillMount() {
@@ -85,14 +82,13 @@ class Dashboard extends React.Component {
     const u = await this.getUsers(this.state.currentChannel)
     const c = await this.getChannels()
     const chart = this.initChart(u.users)
-    const numWords = Object.keys(u.totalWords).length
     this.setState({ 
       users: u.users,
       numUsers: Object.keys(u.users).length,
       words: u.totalWords,
-      numWords: numWords,
+      numWords: u.totalWordCount,
       messages: u.totalMessages,
-      avgLength: (numWords/u.totalMessages),
+      avgLength: (u.totalWordCount/u.totalMessages),
       channelList: c,
       chart: chart,
     })
@@ -102,7 +98,7 @@ class Dashboard extends React.Component {
   render() {
     return (
       <div className='App'>
-        <PageHeader>Channalytics <small>{this.state.currentChannel}</small></PageHeader>
+        <Header currentChannel={this.state.currentChannel}/>
         <Grid fluid={true}>
           <Row>
             <Col md={2} lg={2} className='sidebar'>
@@ -111,19 +107,19 @@ class Dashboard extends React.Component {
                 handleClick={this.handleChannelClick}/>
             </Col>
             <Col md={8} lg={8}>
-              <ChannelMain
+              <PageBody
+                users={this.state.users}
                 names={this.state.chart.names} 
                 numbers={this.state.chart.numbers} 
                 messages={this.state.messages}
                 words={this.state.numWords}
-                users={this.state.numUsers}
+                numUsers={this.state.numUsers}
                 avgLength={this.state.avgLength}/>
-              <UserList users={this.state.users} messages={this.state.messages}/>
             </Col>
           </Row>
         </Grid>
       </div>
-    );
+    )
   }
 }
 

@@ -19,7 +19,8 @@ let isLoading = false
 let token = ''
 let initialized = false
 
-//Get functions
+//Getters
+////////////////////////////////////////////////////////////////////////////////////////////
 const getUserObject = (channel) => {
   console.log("Returning user object")
   while(1){
@@ -37,22 +38,6 @@ const isInitialized = () => {
   return initialized
 }
 module.exports.initialized = isInitialized
-
-//Helper functions
-const findChannel = channel => i => {
-  return i.name === channel
-}
-const filterMessages = () => {
-  return /<.*>|[^A-Za-z]|\bbe\b|\bfor\b|\bwith\b|\bhas\b|\bthe\b|\ba\b|\bi\b|\bI\b|\bon\b|\bto\b|\byou\b|\band\b|\bive\b|\bof\b|\bwhat\b|\bit\b|\bthat\b|\bthis\b|\bis\b|\bhe\b|\bher\b|\bshe\b|\bhe\b|\bin\b|\bwas\b|\bits\b|\bat\b|\bas\b|\ban\b|\bthey\b|\bare\b\bit\b/g
-}
-const filterEmpty = i => i !== '' && !i.includes('http') && i.length > 1
-
-//Data Manipulation
-//Create web client
-const createWebClient = verificationToken => {
-  const web = new WebClient(verificationToken)
-  return web
-}
 
 //Returns a an array of channel objects
 const getChannels = async (web) => {
@@ -74,12 +59,33 @@ const getSelectedChannel = async (web, channel) => {
   return selectedChannel
 }
 
+//Helper functions
+////////////////////////////////////////////////////////////////////////////////////////////
+const findChannel = channel => i => {
+  return i.name === channel
+}
+const filterMessages = () => {
+  return /<.*>|[^A-Za-z]|\bbe\b|\bfor\b|\bwith\b|\bhas\b|\bthe\b|\ba\b|\bi\b|\bI\b|\bon\b|\bto\b|\byou\b|\band\b|\bive\b|\bof\b|\bwhat\b|\bit\b|\bthat\b|\bthis\b|\bis\b|\bhe\b|\bher\b|\bshe\b|\bhe\b|\bin\b|\bwas\b|\bits\b|\bat\b|\bas\b|\ban\b|\bthey\b|\bare\b\bit\b/g
+}
+const filterEmpty = i => i !== '' && !i.includes('http') && i.length > 1
+
+const filterUsers = i => i.real_name !== '' && !i.is_bot && !i.deleted
+
+//Data Manipulation
+////////////////////////////////////////////////////////////////////////////////////////////
+
+//Create web client
+const createWebClient = verificationToken => {
+  const web = new WebClient(verificationToken)
+  return web
+}
+
 //Creates master user object
 const createUserObject = async (web) => {
   //get and filter user and channel list
   const channels = await getChannels(web)
   const userList = await web.users.list()
-  const filteredUsers = userList.members.filter(user => user.real_name !== '' && !user.is_bot && !user.deleted)
+  const filteredUsers = userList.members.filter(filterUsers)
   //create new user object
   let u = { channels: {} }
   //each channel will have a name, users object, totalWords, and totalMessages
@@ -99,6 +105,7 @@ const createUserObject = async (web) => {
       return accumulator
     }, {})
     c.totalWords = {}
+    c.totalWordCount = 0
     c.totalMessages = 0
     return c
   })
@@ -126,22 +133,43 @@ const asyncForEach = async (array, callback) => {
   }
 }
 
-//Reads through the messages in each channel,
-//adds them to the user object, and returns
-//the user object
+const getMessages = async (web, id, limit) => {
+  const initial = await web.conversations.history({
+    channel: id,
+    limit: limit
+  })
+  let hasMore = initial.has_more
+  let messages = [...initial.messages]
+  let cursor = ''
+  if (initial.response_metadata !== undefined) cursor = initial.response_metadata.next_cursor
+  let count = 1
+  while(hasMore && count < 5) {
+    response = await web.conversations.history({
+      channel: id,
+      cursor: cursor,
+      limit: limit
+    })
+    messages = messages.concat(response.messages)
+    if (response.response_metadata !== undefined) cursor = response.response_metadata.next_cursor
+    hasMore = response.has_more
+    count++
+  }
+  console.log(`Messages Length: ${messages.length}`)
+  return messages
+}
+
+//Reads through the messages in each channel and adds them to the user object
 const readConversation = async (web, u, limit=1000) => { 
   const channels = Object.keys(u.channels)
   //loop for each channel
   try {
     await asyncForEach(channels, async (channel) => {
       const id = u.channels[channel].id
-      const channelConvo = await web.conversations.history({ 
-        channel: id,
-        limit: limit
-      })
+      console.log(`Getting messages for ${channel}: ${u.channels[channel].id}`)
+      const channelConvo = await getMessages(web, id, limit)
       //loop for each message in each channel
-      channelConvo.messages.forEach( message => {
-        if (message !== undefined && message.type === 'message' && u.channels[channel].users[message.user] !== undefined) {
+      channelConvo.forEach( message => {
+        if (message.type === 'message' && u.channels[channel].users[message.user] !== undefined) {
           const words = cleanMessage(message)
           u.channels[channel].users[message.user].numMessages += 1
           u.channels[channel].totalMessages += 1
@@ -158,6 +186,7 @@ const readConversation = async (web, u, limit=1000) => {
               u.channels[channel].totalWords[word] += 1
             }
             u.channels[channel].users[message.user].numWords += 1
+            u.channels[channel].totalWordCount += 1
           })
 
         }
@@ -169,10 +198,9 @@ const readConversation = async (web, u, limit=1000) => {
 }
 
 const uniqueness = (word, u, user, channel) => {
-  const thisChannel = u.channels[channel]
-  const thisUser = thisChannel.users[user]
   const unique = 
-    (Math.pow(thisUser.words[word], 2)/thisChannel.totalWords[word])*(thisChannel.totalMessages/thisChannel.numMessages)
+    (Math.pow(u.channels[channel].users[user].words[word], 2)/u.channels[channel].totalWords[word])*
+    (u.channels[channel].totalMessages/u.channels[channel].users[user].numMessages)
   return unique
 }
 
@@ -254,9 +282,11 @@ const init = async (verificationToken, channel) => {
 module.exports.init = init
 
 setInterval(async () => {
-  isLoading = true
-  userObject = await run()
-  isLoading = false
-  console.log('done updating')
+  if (initialized){
+    isLoading = true
+    userObject = await run()
+    isLoading = false
+    console.log('done updating')
+  }
 }, 600000)
 

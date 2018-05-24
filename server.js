@@ -32,6 +32,7 @@ app.use(passport.initialize())
 const asyncRun = async (req, res, next) => {
   let u = undefined
   const initialized = slack.initialized()
+  console.log('getting channel ' + req.params.channelName)
   if (initialized){
     u = await slack.getUserObject(req.params.channelName)
   } else {
@@ -55,14 +56,12 @@ app.get('/auth/slack/', passport.authorize('Slack'))
 app.get('/auth/slack/callback',
   passport.authorize('Slack', { failureRedirect: '/login' }),
   (req, res) => {
-    console.log('in callback')
     authed = true
     res.redirect('http://localhost:3000/#/dashboard')
   }
 )
 
 app.get('/#/dashboard', (req, res) => {
-  console.log('in redirect')
   res.end
 })
 
