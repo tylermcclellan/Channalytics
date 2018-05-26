@@ -16,20 +16,16 @@ class Dashboard extends React.Component {
     this.state = { 
       currentChannel: 'general',
       users: {},
-      numUsers: 0,
-      words: {},
-      numWords: 0,
-      avgLength: 0,
+      currentUsers: {},
       channelList: [],
-      chart: {},
-      messages: 0,
+      chart: {}
     }
     this.handleChannelClick = this.handleChannelClick.bind(this)
   }
   
-  async getUsers(channel){
+  async getUsers(){
     try {
-      const response = await fetch(`/api/run/${channel}`)
+      const response = await fetch(`/api/run/${this.props.uid}/`)
       const body = await response.json()
       console.log(body)
       if (response.status !== 200) throw Error(body.message)
@@ -42,7 +38,7 @@ class Dashboard extends React.Component {
 
   async getChannels(){
     try {
-      const response = await fetch('/api/channels/')
+      const response = await fetch(`/api/channels/${this.props.uid}`)
       const body = await response.json()
       if (response.status !== 200) throw Error(body.message)
       return body
@@ -62,35 +58,43 @@ class Dashboard extends React.Component {
   async handleChannelClick(e) {
     console.log(`e.target: ${e.target.innerHTML}`)
     const channel = e.target.innerHTML
-    console.log('getting channel' + channel)
-    const u = await this.getUsers(channel)
-    const chart = this.initChart(u.users)
+    const u = this.state.users
+    const users = this.state.users.channels[channel].users
+    const chart = this.initChart(users)
+    const numUsers = Object.keys(users).length
+    const messages = u.channels[channel].totalMessages
+    const wordCount = u.channels[channel].totalWordCount
+    const avgLength = wordCount/messages
     this.setState({ 
-      users: u.users,
-      numUsers: Object.keys(u.users).length,
-      words: u.totalWords,
-      numWords: u.totalWordCount,
-      messages: u.totalMessages,
-      avgLength: (u.totalWordCount/u.totalMessages),
       currentChannel: channel,
+      currentUsers: users,
       chart: chart,
+      numUsers: numUsers,
+      messages: messages,
+      wordCount: wordCount,
+      avgLength: avgLength
     })
   }
 
-  async componentWillMount() {
-    console.log('getting users')
-    const u = await this.getUsers(this.state.currentChannel)
+  async componentDidMount() {
+    const currentChannel = this.state.currentChannel
+    const u = await this.getUsers()
+    const users = u.channels[currentChannel].users
     const c = await this.getChannels()
-    const chart = this.initChart(u.users)
-    this.setState({ 
-      users: u.users,
-      numUsers: Object.keys(u.users).length,
-      words: u.totalWords,
-      numWords: u.totalWordCount,
-      messages: u.totalMessages,
-      avgLength: (u.totalWordCount/u.totalMessages),
+    const chart = this.initChart(users)
+    const numUsers = Object.keys(users).length
+    const messages = u.channels[currentChannel].totalMessages
+    const wordCount = u.channels[currentChannel].totalWordCount
+    const avgLength = wordCount/messages
+    this.setState({
+      users: u,
+      currentUsers: users,
       channelList: c,
       chart: chart,
+      numUsers: numUsers,
+      messages: messages,
+      avgLength: avgLength,
+      wordCount: wordCount
     })
   }
 
@@ -108,11 +112,11 @@ class Dashboard extends React.Component {
             </Col>
             <Col md={8} lg={8}>
               <PageBody
-                users={this.state.users}
+                users={this.state.currentUsers}
                 names={this.state.chart.names} 
                 numbers={this.state.chart.numbers} 
                 messages={this.state.messages}
-                words={this.state.numWords}
+                words={this.state.wordCount}
                 numUsers={this.state.numUsers}
                 avgLength={this.state.avgLength}/>
             </Col>

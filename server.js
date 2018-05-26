@@ -1,50 +1,48 @@
 //Startup and Dependencies
 console.log("Loading in!!")
-const dotenv = require('dotenv').config(),
-  passport = require('passport'),
-  SlackStrategy = require('passport-slack-oauth2').Strategy,
-  express = require('express'),
-  app = express(),
-  slack = require('./local/slack')
+const dotenv = require('dotenv').config()
+const passport = require('passport')
+const SlackStrategy = require('passport-slack-oauth2').Strategy
+const express = require('express')
+const app = express()
+const slack = require('./local/slack')
+const crypto = require('./local/crypto')
 
 //Globals
-const PORT = 5000
+const PORT = 5001
 const CLIENT_ID = process.env.CLIENT_ID
 const CLIENT_SECRET = process.env.CLIENT_SECRET
-let accessCode = ''
-let authed = false
+const SESSION_SECRET = process.env.SESSION_SECRET
+const token = process.env.ACCESS_TOKEN
 
 //Slack Authentication Setup
 passport.use(new SlackStrategy({
   clientID: CLIENT_ID,
   clientSecret: CLIENT_SECRET
 }, (accessToken, refreshToken, profile, done) => {
-  console.log('Access Token: ' + accessToken)
-  accessCode = accessToken
-  //slack.init(accessToken)
   done(null, profile)
-  }
-))
+}))
 app.use(require('body-parser').urlencoded({ extended: true }))
 app.use(passport.initialize())
 
 //Middleware
 const asyncRun = async (req, res, next) => {
-  let u = undefined
-  const initialized = slack.initialized()
-  console.log('getting channel ' + req.params.channelName)
-  if (initialized){
-    u = await slack.getUserObject(req.params.channelName)
-  } else {
-    u = await slack.init(accessCode, req.params.channelName)
-  }
+  const  u = await slack.getUserObject(token, req.uid)
   req.data = u
   next()
 }
 
 const asyncChannels = async (req, res, next) => {
-  const channels = await slack.getChannelNames()
+  console.log(`asyncChannel uid: ${req.uid}`)
+  const channels = await slack.getChannelNames(token, req.uid)
   req.data = channels
+  next()
+}
+
+const decrypt = (req, res, next) => {
+  const encrypted = req.params.uid
+  const decrypted = crypto.decrypt(encrypted)
+  req.uid = decrypted
   next()
 }
 
@@ -57,30 +55,19 @@ app.get('/auth/slack/callback',
   passport.authorize('Slack', { failureRedirect: '/login' }),
   (req, res) => {
     authed = true
-    res.redirect('http://localhost:3000/#/dashboard')
+    const uid = crypto.encrypt(req.account.id)
+    res.redirect('http://localhost:3000/#/dashboard/?' + uid)
   }
 )
 
-app.get('/#/dashboard', (req, res) => {
-  res.end
-})
-
-app.get('/api/run/:channelName', asyncRun, (req, res) => {
+app.get('/api/run/:uid', decrypt, asyncRun, (req, res) => {
   console.log("Returning user object")
   res.send(req.data)
 })
 
-app.get('/api/channels/', asyncChannels, (req, res) => {
+app.get('/api/channels/:uid', decrypt, asyncChannels, (req, res) => {
   console.log("Returning channel object")
   res.send(req.data)
-})
-
-app.get('/api/authed/', (req, res) => {
-  res.send(authed)
-})
-
-app.get('/api/client/', (req, res) => {
-  res.send({ id: CLIENT_ID })
 })
 
 app.listen(PORT, () => console.log(`Listening on port ${PORT}`))

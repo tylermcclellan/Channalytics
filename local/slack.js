@@ -14,23 +14,41 @@ const underscore = "\x1b[4m"
 const blink = "\x1b[5m"
 const reverse = "\x1b[7m"
 const hidden = "\x1b[8m"
-let userObject = {}
-let isLoading = false
-let token = ''
-let initialized = false
+
+//Classes
+////////////////////////////////////////////////////////////////////////////////////////////
+class Channel {
+  constructor() {
+    this.totalMessages = 0
+    this.totalWords = {}
+    this.totalWordCount = 0
+    this.name = ''
+    this.id = ''
+    this.users = {}
+  }
+}
+
+class User {
+  constructor() {
+    this.id = ''
+    this.real_name = ''
+    this.words = {}
+    this.profile = {}
+    this.numMessages = 0
+    this.numWords = 0
+    this.uniqueWords = []
+  }
+}
+
 
 //Getters
 ////////////////////////////////////////////////////////////////////////////////////////////
-const getUserObject = (channel) => {
-  console.log("Returning user object")
-  while(1){
-    if (!isLoading) return userObject.channels[channel]
-  }
-}
-module.exports.getUserObject = getUserObject
-
-const getChannelNames = () => {
-  return Object.keys(userObject.channels)
+const getChannelNames = async (token, uid) => {
+  const web = createWebClient(token)
+  const list = await web.channels.list()
+  const filteredList = list.channels.filter(channel => channel.members.includes(uid))
+  const channelList = filteredList.map(channel => channel.name)
+  return channelList
 }
 module.exports.getChannelNames = getChannelNames
 
@@ -40,24 +58,12 @@ const isInitialized = () => {
 module.exports.initialized = isInitialized
 
 //Returns a an array of channel objects
-const getChannels = async (web) => {
-  const conversations = await web.users.conversations()
-  const channels = conversations.channels
-  const upgradedChannels = await Promise.all(channels.map( async (channel) => {
-    const response = await web.conversations.members({ channel: channel.id })
-    channel.members = response.members
-    return channel
-  }))
-  return upgradedChannels
+const getChannels = async (web, uid) => {
+  const conversations = await web.channels.list()
+  const channels = conversations.channels.filter(channel => channel.members.includes(uid))
+  return channels
 }
 module.exports.getChannels = getChannels
-
-//Returns a selected channel object
-const getSelectedChannel = async (web, channel) => {
-  const response = await getChannels(web)
-  const selectedChannel = response.find(findChannel(channel))
-  return selectedChannel
-}
 
 //Helper functions
 ////////////////////////////////////////////////////////////////////////////////////////////
@@ -65,7 +71,7 @@ const findChannel = channel => i => {
   return i.name === channel
 }
 const filterMessages = () => {
-  return /<.*>|[^A-Za-z]|\bbe\b|\bfor\b|\bwith\b|\bhas\b|\bthe\b|\ba\b|\bi\b|\bI\b|\bon\b|\bto\b|\byou\b|\band\b|\bive\b|\bof\b|\bwhat\b|\bit\b|\bthat\b|\bthis\b|\bis\b|\bhe\b|\bher\b|\bshe\b|\bhe\b|\bin\b|\bwas\b|\bits\b|\bat\b|\bas\b|\ban\b|\bthey\b|\bare\b\bit\b/g
+  return /<.*>|:.*:|[^A-Za-z]|\bbe\b|\bfor\b|\bwith\b|\bhas\b|\bthe\b|\ba\b|\bi\b|\bI\b|\bon\b|\bto\b|\byou\b|\band\b|\bive\b|\bof\b|\bwhat\b|\bit\b|\bthat\b|\bthis\b|\bis\b|\bhe\b|\bher\b|\bshe\b|\bhe\b|\bin\b|\bwas\b|\bits\b|\bat\b|\bas\b|\ban\b|\bthey\b|\bare\b\bit\b|\byour\b|\bif\b|\bour\b/g
 }
 const filterEmpty = i => i !== '' && !i.includes('http') && i.length > 1
 
@@ -81,32 +87,28 @@ const createWebClient = verificationToken => {
 }
 
 //Creates master user object
-const createUserObject = async (web) => {
+const createUserObject = async (web, uid) => {
   //get and filter user and channel list
-  const channels = await getChannels(web)
+  const channels = await getChannels(web, uid)
   const userList = await web.users.list()
   const filteredUsers = userList.members.filter(filterUsers)
   //create new user object
   let u = { channels: {} }
   //each channel will have a name, users object, totalWords, and totalMessages
   const channelArr = channels.map(channel => {
-    let c = {}
+    let c = new Channel
     c.name = channel.name
     c.id = channel.id
     //filter user list to only those within the current channel
     const users = filteredUsers.filter(user => channel.members.includes(user.id))
     //change user list into object referrable by user id
     c.users = users.reduce((accumulator, currentValue) => {
-      accumulator[currentValue.id] = currentValue
-      accumulator[currentValue.id].words = {}
-      accumulator[currentValue.id].numMessages = 0
-      accumulator[currentValue.id].numWords = 0
-      accumulator[currentValue.id].uniqueWords = []
+      accumulator[currentValue.id] = new User
+      accumulator[currentValue.id].real_name = currentValue.real_name
+      accumulator[currentValue.id].id = currentValue.id
+      accumulator[currentValue.id].profile = currentValue.profile
       return accumulator
     }, {})
-    c.totalWords = {}
-    c.totalWordCount = 0
-    c.totalMessages = 0
     return c
   })
   //reduce channel array into object referrable by channel name
@@ -118,6 +120,7 @@ const createUserObject = async (web) => {
 }
 
 const cleanMessage = message => {
+  //const noStops = message.removeStopWords()
   let words = message.text.split(" ")
   words = words.map(item => {
     item = item.toLowerCase()
@@ -154,7 +157,6 @@ const getMessages = async (web, id, limit) => {
     hasMore = response.has_more
     count++
   }
-  console.log(`Messages Length: ${messages.length}`)
   return messages
 }
 
@@ -165,7 +167,6 @@ const readConversation = async (web, u, limit=1000) => {
   try {
     await asyncForEach(channels, async (channel) => {
       const id = u.channels[channel].id
-      console.log(`Getting messages for ${channel}: ${u.channels[channel].id}`)
       const channelConvo = await getMessages(web, id, limit)
       //loop for each message in each channel
       channelConvo.forEach( message => {
@@ -246,13 +247,13 @@ const round = (value, decimals) => {
 }
 
 
-const run = async () => {
+const run = async (token, uid) => {
   try {
     console.log(`${blue}Creating new Web Client${reset}`)
     const web = createWebClient(token)
     
     console.log(`${green}Creating User Object${reset}`)
-    let userObject = await createUserObject(web)
+    let userObject = await createUserObject(web, uid)
     
     console.log(`${yellow}Reading your conversations${reset}`)
     await readConversation(web, userObject, 1000)
@@ -264,29 +265,4 @@ const run = async () => {
     console.log(e)
   }
 }
-
-const init = async (verificationToken, channel) => {
-  try {
-    token = verificationToken
-    isLoading = true
-    console.log('in init')
-    userObject = await run()
-    isLoading = false
-    initialized = true
-    return userObject.channels[channel]
-  } catch(e) {
-    console.log(e)
-  }
-}
-
-module.exports.init = init
-
-setInterval(async () => {
-  if (initialized){
-    isLoading = true
-    userObject = await run()
-    isLoading = false
-    console.log('done updating')
-  }
-}, 600000)
-
+module.exports.getUserObject = run

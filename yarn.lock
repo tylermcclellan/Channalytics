@@ -5867,6 +5867,16 @@ window-size@0.1.0:
   version "0.1.0"
   resolved "https://registry.yarnpkg.com/window-size/-/window-size-0.1.0.tgz#5438cd2ea93b202efa3a19fe8887aee7c94f9c9d"
 
+wink-sentiment@^4.0.1:
+  version "4.0.1"
+  resolved "https://registry.yarnpkg.com/wink-sentiment/-/wink-sentiment-4.0.1.tgz#fe5c26e8a7949229334be0fffb78dc84bd4ccf49"
+  dependencies:
+    wink-tokenizer "^3.0.0"
+
+wink-tokenizer@^3.0.0:
+  version "3.2.0"
+  resolved "https://registry.yarnpkg.com/wink-tokenizer/-/wink-tokenizer-3.2.0.tgz#f8a7bfda3f9cd5f48627c3a6c8579c86dee8eb40"
+
 wordwrap@0.0.2:
   version "0.0.2"
   resolved "https://registry.yarnpkg.com/wordwrap/-/wordwrap-0.0.2.tgz#b79669bb42ecb409f83d583cad52ca17eaa1643f"
