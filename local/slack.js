@@ -1,4 +1,5 @@
 const { WebClient } = require('@slack/client')
+const sentiment = require('wink-sentiment')
 const black = "\x1b[30m"
 const red = "\x1b[31m"
 const green = "\x1b[32m"
@@ -24,6 +25,7 @@ class Channel {
     this.totalWordCount = 0
     this.name = ''
     this.id = ''
+    this.sentiment = 0
     this.users = {}
   }
 }
@@ -36,6 +38,7 @@ class User {
     this.profile = {}
     this.numMessages = 0
     this.numWords = 0
+    this.sentiment = 0
     this.uniqueWords = []
   }
 }
@@ -171,9 +174,12 @@ const readConversation = async (web, u, limit=1000) => {
       //loop for each message in each channel
       channelConvo.forEach( message => {
         if (message.type === 'message' && u.channels[channel].users[message.user] !== undefined) {
+          const messageSentiment = sentiment(message.text).normalizedScore
           const words = cleanMessage(message)
           u.channels[channel].users[message.user].numMessages += 1
+          u.channels[channel].users[message.user].sentiment += messageSentiment
           u.channels[channel].totalMessages += 1
+          u.channels[channel].sentiment += messageSentiment
           //loop for each word in each message in each channel
           words.forEach( word => {
             if (u.channels[channel].users[message.user].words[word] === undefined) {

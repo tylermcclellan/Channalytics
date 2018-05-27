@@ -13,6 +13,7 @@ class ChannelInfo extends React.Component {
         <h4>Total Words: {this.props.words}</h4>
         <h4>Number of Users: {this.props.users}</h4>
         <h4>Average Message Length: {round(this.props.avgLength, 2)}</h4>
+        <h4>*Average Message Sentiment: {round(this.props.avgSentiment, 2)}</h4>
       </div>
     )
   }

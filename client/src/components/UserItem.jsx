@@ -13,13 +13,16 @@ class UserItem extends React.Component {
               <span>{this.props.name}</span> 
             </Col>
             <Col md={1} lg={1}>
-              <span>{this.props.percent}</span>
+              <span>{this.props.percent}%</span>
             </Col>
             <Col md={1} lg={1}>
               <span>{this.props.messages}</span>
             </Col>
             <Col md={1} lg={1}>
               <span>{this.props.words}</span>
+            </Col>
+            <Col md={2} lg={2}>
+              <span>{this.props.sentiment}</span>
             </Col>
             <Col md={3} lg={3}>
               <span>{this.props.unique}</span>

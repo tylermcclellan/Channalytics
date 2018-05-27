@@ -65,6 +65,7 @@ class Dashboard extends React.Component {
     const messages = u.channels[channel].totalMessages
     const wordCount = u.channels[channel].totalWordCount
     const avgLength = wordCount/messages
+    const avgSentiment = u.channels[channel].sentiment/messages
     this.setState({ 
       currentChannel: channel,
       currentUsers: users,
@@ -72,7 +73,8 @@ class Dashboard extends React.Component {
       numUsers: numUsers,
       messages: messages,
       wordCount: wordCount,
-      avgLength: avgLength
+      avgLength: avgLength,
+      avgSentiment: avgSentiment
     })
   }
 
@@ -86,6 +88,7 @@ class Dashboard extends React.Component {
     const messages = u.channels[currentChannel].totalMessages
     const wordCount = u.channels[currentChannel].totalWordCount
     const avgLength = wordCount/messages
+    const avgSentiment = u.channels[currentChannel].sentiment/messages
     this.setState({
       users: u,
       currentUsers: users,
@@ -94,6 +97,7 @@ class Dashboard extends React.Component {
       numUsers: numUsers,
       messages: messages,
       avgLength: avgLength,
+      avgSentiment: avgSentiment,
       wordCount: wordCount
     })
   }
@@ -118,7 +122,8 @@ class Dashboard extends React.Component {
                 messages={this.state.messages}
                 words={this.state.wordCount}
                 numUsers={this.state.numUsers}
-                avgLength={this.state.avgLength}/>
+                avgLength={this.state.avgLength}
+                avgSentiment={this.state.avgSentiment}/>
             </Col>
           </Row>
         </Grid>

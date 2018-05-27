@@ -7,6 +7,7 @@ import { Row, Col, Well } from 'react-bootstrap'
 class ChannelMain extends React.Component {
   
   render() {
+    console.log(`Current Users: ${Object.keys(this.props.users)}`)
     return (
       <div>
         <Row>
@@ -19,12 +20,14 @@ class ChannelMain extends React.Component {
                 messages={this.props.messages}
                 words={this.props.words}
                 users={this.props.numUsers}
-                avgLength={this.props.avgLength}/>
+                avgLength={this.props.avgLength}
+                avgSentiment={this.props.avgSentiment}/>
             </Well>
           </Col>
         </Row>
         <Row>
           <UserList users={this.props.users} messages={this.props.messages}/>
+          <p>*Sentiment is a way of measuring the polarity of a messages. A positive sentiment means that the message is positive like "good" or "nice" and vice versa</p>
         </Row>
       </div>
     )
