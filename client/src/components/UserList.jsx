@@ -10,14 +10,12 @@ const round = (value, decimals) => {
 
 class UserList extends React.Component {
   constructor(props) {
-    console.log('constructing')
     super(props)
     this.state = { userList: [] }
     this.handleSort = this.handleSort.bind(this)
   }
 
   handleSort(e){
-    console.log('handling sort')
     const rawText = e.target.innerHTML
     const loweredText = rawText.toLowerCase()
     let sorter = loweredText
@@ -33,7 +31,8 @@ class UserList extends React.Component {
     }
     const userList = this.state.userList
     const sortedList = _.sortBy(userList, [item => item.props[sorter]])
-    const list = sortedList.reverse()
+    let list = sortedList
+    if (sorter !== 'name') list = list.reverse()
     this.setState({ userList: list })
   }
 
@@ -66,16 +65,27 @@ class UserList extends React.Component {
   }
 
   render() {
-    console.log('rendering')
     return (
       <Grid>
         <Row mdpull={2} lgpull={2}>
-          <Col md={3} lg={3}><span onClick={this.handleSort}><b>User</b></span></Col>
-          <Col md={1} lg={1}><span onClick={this.handleSort}><b>Percentage</b></span></Col>
-          <Col md={1} lg={1}><span onClick={this.handleSort}><b>Messages</b></span></Col>
-          <Col md={1} lg={1}><span onClick={this.handleSort}><b>Words</b></span></Col>
-          <Col md={2} lg={2}><span onClick={this.handleSort}><b>Sentiment</b></span></Col>
-          <Col md={2} lg={2}><span><b>Unique Words</b></span></Col>
+          <Col md={3} lg={3}>
+            <span onClick={this.handleSort}><b>User</b></span>
+          </Col>
+          <Col md={1} lg={1}>
+            <span onClick={this.handleSort}><b>Percentage</b></span>
+          </Col>
+          <Col md={1} lg={1}>
+            <span onClick={this.handleSort}><b>Messages</b></span>
+          </Col>
+          <Col md={1} lg={1}>
+            <span onClick={this.handleSort}><b>Words</b></span>
+          </Col>
+          <Col md={2} lg={2}>
+            <span onClick={this.handleSort}><b>Sentiment</b></span>
+          </Col>
+          <Col md={2} lg={2}>
+            <span><b>Unique Words</b></span>
+          </Col>
         </Row>
         <Row>
           <ListGroup>{this.state.userList}</ListGroup>

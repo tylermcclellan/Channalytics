@@ -33,7 +33,6 @@ const asyncRun = async (req, res, next) => {
 }
 
 const asyncChannels = async (req, res, next) => {
-  console.log(`asyncChannel uid: ${req.uid}`)
   const channels = await slack.getChannelNames(token, req.uid)
   req.data = channels
   next()

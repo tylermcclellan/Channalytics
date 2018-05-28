@@ -28,9 +28,11 @@
     "passport-slack": "^0.0.7",
     "passport-slack-oauth2": "^1.0.2",
     "plotly.js": "^1.37.1",
+    "prop-types": "^15.6.1",
     "react": "^16.3.2",
     "react-bootstrap": "^0.32.1",
     "react-dom": "^16.3.2",
+    "react-icons": "^2.2.7",
     "react-plotly.js": "^2.2.0",
     "react-router-dom": "^4.2.2",
     "wink-sentiment": "^4.0.1"

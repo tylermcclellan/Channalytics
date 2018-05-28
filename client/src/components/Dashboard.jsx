@@ -7,6 +7,7 @@ import {
 import ChannelList from './ChannelList'
 import PageBody from './PageBody'
 import Header from './Header'
+import LoadingPage from './LoadingPage'
 import '../App.css'
 
 
@@ -18,7 +19,8 @@ class Dashboard extends React.Component {
       users: {},
       currentUsers: {},
       channelList: [],
-      chart: {}
+      chart: {},
+      loaded: false
     }
     this.handleChannelClick = this.handleChannelClick.bind(this)
   }
@@ -98,35 +100,43 @@ class Dashboard extends React.Component {
       messages: messages,
       avgLength: avgLength,
       avgSentiment: avgSentiment,
-      wordCount: wordCount
+      wordCount: wordCount,
+      loaded: true
     })
   }
 
 
   render() {
+    const loading = this.state.loaded ? false : true
     return (
       <div className='App'>
-        <Header currentChannel={this.state.currentChannel}/>
-        <Grid fluid={true}>
-          <Row>
-            <Col md={2} lg={2} className='sidebar'>
-              <ChannelList 
-                channels={this.state.channelList} 
-                handleClick={this.handleChannelClick}/>
-            </Col>
-            <Col md={8} lg={8}>
-              <PageBody
-                users={this.state.currentUsers}
-                names={this.state.chart.names} 
-                numbers={this.state.chart.numbers} 
-                messages={this.state.messages}
-                words={this.state.wordCount}
-                numUsers={this.state.numUsers}
-                avgLength={this.state.avgLength}
+      { loading ? (
+        <LoadingPage className='HomePage'/>
+      ) : (
+        <div>
+          <Header currentChannel={this.state.currentChannel}/>
+          <Grid fluid={true}>
+            <Row>
+              <Col md={2} lg={2} className='sidebar'>
+                <ChannelList 
+                  channels={this.state.channelList} 
+                  handleClick={this.handleChannelClick}/>
+              </Col>
+              <Col md={8} lg={8}>
+                <PageBody
+                  users={this.state.currentUsers}
+                  names={this.state.chart.names} 
+                  numbers={this.state.chart.numbers} 
+                  messages={this.state.messages}
+                  words={this.state.wordCount}
+                  numUsers={this.state.numUsers}
+                  avgLength={this.state.avgLength}
                 avgSentiment={this.state.avgSentiment}/>
-            </Col>
-          </Row>
-        </Grid>
+              </Col>
+            </Row>
+          </Grid>
+        </div>
+        )}
       </div>
     )
   }
