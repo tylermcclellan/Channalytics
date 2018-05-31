@@ -7,10 +7,20 @@ class PieChart extends React.Component {
       values: this.props.numbers, 
       labels: this.props.names, 
       type: 'pie',
-      hole: .4}]
-    const layout = {width: null, height: null, title: "User Participation"}
+      hole: .3
+    }]
+    const layout = {
+      width: null, 
+      height: null, 
+      paper_bgcolor: '#7395ae', 
+      plot_bgcolor: '#7395ae',
+      margin: {b: '100'}
+    }
     return (
-      <Plot data={data} layout={layout} />
+      <div>
+        <h2>User Participation</h2>
+        <Plot data={data} layout={layout} />
+      </div>
     )
   }
 }

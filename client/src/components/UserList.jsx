@@ -1,6 +1,6 @@
 import React from 'react'
 import UserItem from './UserItem'
-import { ListGroup, Grid, Row, Col } from 'react-bootstrap'
+import { ListGroup, Row, Col } from 'react-bootstrap'
 const _ = require('lodash')
 
 const round = (value, decimals) => {
@@ -45,7 +45,7 @@ class UserList extends React.Component {
       const name = user.real_name
       const percent = round(user.numMessages/props.messages*100, 2)
       const messages = user.numMessages
-      const words = user.numWords
+      const numWords = user.numWords
       let unique = user.uniqueWords.map( 
         word => word !== user.uniqueWords[user.uniqueWords.length-1] ? `${word}, ` : `${word}`
       )
@@ -57,7 +57,8 @@ class UserList extends React.Component {
         name={name}
         percent={percent}
         messages={messages}
-        words={words}
+        words={user.words}
+        numWords={numWords}
         unique={unique} 
         sentiment={sentiment}/>
       })
@@ -66,12 +67,12 @@ class UserList extends React.Component {
 
   render() {
     return (
-      <Grid>
-        <Row mdpull={2} lgpull={2}>
+      <div>
+        <Row className='pointer'>
           <Col md={3} lg={3}>
             <span onClick={this.handleSort}><b>User</b></span>
           </Col>
-          <Col md={1} lg={1}>
+          <Col md={2} lg={2}>
             <span onClick={this.handleSort}><b>Percentage</b></span>
           </Col>
           <Col md={1} lg={1}>
@@ -88,9 +89,9 @@ class UserList extends React.Component {
           </Col>
         </Row>
         <Row>
-          <ListGroup>{this.state.userList}</ListGroup>
+          <ListGroup className='UserList'>{this.state.userList}</ListGroup>
         </Row>
-      </Grid>
+      </div>
     )
   }
 }

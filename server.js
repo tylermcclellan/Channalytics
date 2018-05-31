@@ -12,7 +12,9 @@ const crypto = require('./local/crypto')
 const PORT = 5001
 const CLIENT_ID = process.env.CLIENT_ID
 const CLIENT_SECRET = process.env.CLIENT_SECRET
-const SESSION_SECRET = process.env.SESSION_SECRET
+const WATSON_USERNAME = process.env.WATSON_USERNAME
+const WATSON_PASSWORD = process.env.WATSON_PASSWORD
+const WATSON_URL = process.env.WATSON_URL
 const token = process.env.ACCESS_TOKEN
 
 //Slack Authentication Setup
@@ -70,3 +72,4 @@ app.get('/api/channels/:uid', decrypt, asyncChannels, (req, res) => {
 })
 
 app.listen(PORT, () => console.log(`Listening on port ${PORT}`))
+

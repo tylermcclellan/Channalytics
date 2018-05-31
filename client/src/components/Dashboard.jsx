@@ -4,7 +4,7 @@ import {
   Row,
   Col
 } from 'react-bootstrap'
-import ChannelList from './ChannelList'
+import Sidebar from './Sidebar'
 import PageBody from './PageBody'
 import Header from './Header'
 import LoadingPage from './LoadingPage'
@@ -24,14 +24,13 @@ class Dashboard extends React.Component {
     }
     this.handleChannelClick = this.handleChannelClick.bind(this)
   }
-  
+ 
   async getUsers(){
     try {
       const response = await fetch(`/api/run/${this.props.uid}/`)
       const body = await response.json()
       console.log(body)
       if (response.status !== 200) throw Error(body.message)
-
       return body
     } catch(e) {
       console.log(e)
@@ -58,7 +57,6 @@ class Dashboard extends React.Component {
   }
 
   async handleChannelClick(e) {
-    console.log(`e.target: ${e.target.innerHTML}`)
     const channel = e.target.innerHTML
     const u = this.state.users
     const users = this.state.users.channels[channel].users
@@ -93,6 +91,7 @@ class Dashboard extends React.Component {
     const avgSentiment = u.channels[currentChannel].sentiment/messages
     this.setState({
       users: u,
+      personality: u.insights,
       currentUsers: users,
       channelList: c,
       chart: chart,
@@ -108,21 +107,24 @@ class Dashboard extends React.Component {
 
   render() {
     const loading = this.state.loaded ? false : true
+    const requestSuccess = this.state.personality !== undefined ? true : false
     return (
       <div className='App'>
       { loading ? (
-        <LoadingPage className='HomePage'/>
+        <LoadingPage/>
       ) : (
         <div>
           <Header currentChannel={this.state.currentChannel}/>
-          <Grid fluid={true}>
+          <Grid>
             <Row>
-              <Col md={2} lg={2} className='sidebar'>
-                <ChannelList 
+              <Col md={3} lg={3}>
+                <Sidebar
                   channels={this.state.channelList} 
-                  handleClick={this.handleChannelClick}/>
+                  handleClick={this.handleChannelClick}
+                  personality={this.state.personality} 
+                  showPersonality={requestSuccess}/>
               </Col>
-              <Col md={8} lg={8}>
+              <Col md={9} lg={9} >
                 <PageBody
                   users={this.state.currentUsers}
                   names={this.state.chart.names} 
@@ -131,7 +133,7 @@ class Dashboard extends React.Component {
                   words={this.state.wordCount}
                   numUsers={this.state.numUsers}
                   avgLength={this.state.avgLength}
-                avgSentiment={this.state.avgSentiment}/>
+                  avgSentiment={this.state.avgSentiment}/>
               </Col>
             </Row>
           </Grid>

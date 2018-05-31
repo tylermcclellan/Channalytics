@@ -4,17 +4,19 @@ import ChannelInfo from './ChannelInfo'
 import UserList from './UserList'
 import { Row, Col, Well } from 'react-bootstrap'
 
-class ChannelMain extends React.Component {
+class PageBody extends React.Component {
   
   render() {
     console.log(`Current Users: ${Object.keys(this.props.users)}`)
     return (
       <div>
         <Row>
-          <Col md={9} lg={9}>
+          <Col>
             <PieChart names={this.props.names} numbers={this.props.numbers}/ >
           </Col>
-          <Col md={3} lg={3}>
+        </Row>
+        <Row>
+          <Col>
             <Well>
               <ChannelInfo 
                 messages={this.props.messages}
@@ -26,12 +28,14 @@ class ChannelMain extends React.Component {
           </Col>
         </Row>
         <Row>
-          <UserList users={this.props.users} messages={this.props.messages}/>
-          <p>*Sentiment is a way of measuring the polarity of a messages. A positive sentiment means that the message is positive like "good" or "nice" and vice versa</p>
+          <Col>
+            <UserList users={this.props.users} messages={this.props.messages}/>
+            <p>*Sentiment is a way of measuring the polarity of a messages. A positive sentiment means that the message is positive like "good" or "nice" and vice versa</p>
+          </Col>
         </Row>
       </div>
     )
   }
 }
 
-  export default ChannelMain
+  export default PageBody

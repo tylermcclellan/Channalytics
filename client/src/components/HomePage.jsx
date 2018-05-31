@@ -5,7 +5,7 @@ class HomePage extends React.Component {
   
   render() {
     return (
-      <Jumbotron className='HomePage'>
+      <Jumbotron className='Jumbotron' style={{height: '50%'}}>
         <h1>Channalytics</h1>
         <p>A Slack app for numberphiles.</p>
         <a href="https://slack.com/oauth/authorize?scope=identity.basic&client_id=4845121638.361800582950">

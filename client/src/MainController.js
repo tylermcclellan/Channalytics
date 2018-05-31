@@ -17,7 +17,7 @@ export class MainController extends React.Component {
         <Redirect exact from='/' to='/login' />
         <Route 
           path='/login' 
-          component={HomePage}/>}
+          component={HomePage}
         />
         <Route 
           path='/dashboard' 
