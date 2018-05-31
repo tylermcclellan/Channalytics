@@ -3136,7 +3136,7 @@ lodash@^3.10.1:
   version "3.10.1"
   resolved "https://registry.yarnpkg.com/lodash/-/lodash-3.10.1.tgz#5bf45e8e49ba4189e17d482789dfd15bd140b7b6"
 
-lodash@^4.17.10, lodash@^4.17.4:
+lodash@^4.13.1, lodash@^4.17.10, lodash@^4.17.4:
   version "4.17.10"
   resolved "https://registry.yarnpkg.com/lodash/-/lodash-4.17.10.tgz#1b7793cf7259ea38fb3661d4d38b3260af8ae4e7"
 
@@ -3278,6 +3278,17 @@ marching-simplex-table@^1.0.0:
   resolved "https://registry.yarnpkg.com/marching-simplex-table/-/marching-simplex-table-1.0.0.tgz#bc16256e0f8f9b558aa9b2872f8832d9433f52ea"
   dependencies:
     convex-hull "^1.0.3"
+
+markov-chain-js@^1.0.2:
+  version "1.0.2"
+  resolved "https://registry.yarnpkg.com/markov-chain-js/-/markov-chain-js-1.0.2.tgz#477cc42640a69c2595a3ea9958315d54e199f858"
+
+markov-strings@^1.5.0:
+  version "1.5.0"
+  resolved "https://registry.yarnpkg.com/markov-strings/-/markov-strings-1.5.0.tgz#a95f8b240c6dbb8db3cb56f699c654612569a51e"
+  dependencies:
+    debug "^3.1.0"
+    lodash "^4.13.1"
 
 mat4-decompose@^1.0.3:
   version "1.0.4"

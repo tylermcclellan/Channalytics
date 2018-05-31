@@ -115,7 +115,7 @@ class Dashboard extends React.Component {
       ) : (
         <div>
           <Header currentChannel={this.state.currentChannel}/>
-          <Grid>
+          <Grid style={{outline: '3px 3px outset brown'}}>
             <Row>
               <Col md={3} lg={3}>
                 <Sidebar

@@ -1,7 +1,7 @@
 const { WebClient } = require('@slack/client')
 const sentiment = require('wink-sentiment')
 const PersonalityInsightsV3 = require('watson-developer-cloud/personality-insights/v3')
-const util = require('util')
+const Markov = require('markov-strings')
 const black = "\x1b[30m"
 const red = "\x1b[31m"
 const green = "\x1b[32m"
@@ -64,13 +64,6 @@ const getChannelNames = async (token, uid) => {
 }
 module.exports.getChannelNames = getChannelNames
 
-  /*
-const isInitialized = () => {
-  return initialized
-}
-module.exports.initialized = isInitialized
-*/
-
 //Returns a an array of channel objects
 const getChannels = async (web, uid) => {
   try {
@@ -127,8 +120,8 @@ const createUserObject = async (web, uid) => {
       channels: {},
       messageDump: '',
       insights: [],
-      //this is Linell's ID (placeholder for testing)
-      uid: 'U04QV3KKJ'
+      //this is Russ's ID (placeholder for testing)
+      uid: 'U04QV5ULJ'
     }
     const channelArr = channels.map(channel => {
       let c = new Channel
@@ -225,6 +218,10 @@ const readConversation = async (web, u, limit=1000) => {
         }
       })
     })
+    const markov = new Markov(u.messageDump.replace(/<.*/g, '').split('\n'))
+    markov.buildCorpusSync()
+    const result = markov.generateSentenceSync()
+    console.log(result.string)
   } catch(e) {
     console.log(e)
   }
