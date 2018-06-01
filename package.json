@@ -12,7 +12,6 @@
     "start": "nodemon server.js",
     "heroku-postbuild": "cd client && yarn && yarn run build"
   },
-  "homepage": "http://tylermcclellan.github.io/channalytics",
   "dependencies": {
     "@aoberoi/passport-slack": "^1.0.5",
     "@slack/client": "^4.2.2",
