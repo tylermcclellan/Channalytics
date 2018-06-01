@@ -18,21 +18,20 @@ class Impression extends React.Component {
   }
   
   handleClick = e => {
-      const data = this.props.messageDump
-      let content
-      if (data.length > 35) {
-        const markov = new Markov(data)
-        markov.buildCorpusSync()
-        const result = markov.generateSentenceSync()
-        content = result.string + '\n' + data.length
-      } else {
-        content = 'Not enough data'
-      }
-      this.setState({ 
-        target: e.target, 
-        show: !this.state.show, 
-        content: content
-      })
+    const data = this.props.messageDump
+    let content
+    if (data.length > 35) {
+      const markov = new Markov(data)
+      markov.buildCorpusSync()
+      const result = markov.generateSentenceSync()
+      content = result.string
+    } else {
+      content = 'Not enough data'
+    }
+    this.setState({ 
+      target: e.target,
+      content: content
+    })
   }
 
   render() {

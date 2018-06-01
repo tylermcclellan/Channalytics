@@ -4,6 +4,7 @@ const dotenv = require('dotenv').config()
 const passport = require('passport')
 const SlackStrategy = require('passport-slack-oauth2').Strategy
 const express = require('express')
+const path = require('path')
 const app = express()
 const slack = require('./local/slack')
 const crypto = require('./local/crypto')
@@ -46,8 +47,7 @@ const decrypt = (req, res, next) => {
 }
 
 //Routes
-//path to start OAuth flow
-app.get('/auth/slack/', passport.authorize('Slack'))
+app.use(express.static(path.join(__dirname, 'client/build')))
 
 //OAuth callback url
 app.get('/auth/slack/callback',
@@ -67,11 +67,6 @@ app.get('/api/run/:uid', decrypt, asyncRun, (req, res) => {
 app.get('/api/channels/:uid', decrypt, asyncChannels, (req, res) => {
   console.log("Returning channel object")
   res.send(req.data)
-})
-
-app.get('/api/impersonate/', (req, res) => {
-  console.log('impersonating')
-  res.send(markov.impersonate(req.body))
 })
 
 app.listen(PORT, () => console.log(`Listening on port ${PORT}`))

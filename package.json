@@ -9,18 +9,8 @@
   },
   "license": "MIT",
   "scripts": {
-    "client": "cd client && yarn start",
-    "server": "nodemon server.js",
-    "dev": "concurrently --kill-others-on-fail \"yarn server\" \"yarn client\"",
-    "build": "ls"
-  },
-  "babel": {
-    "plugins": [
-      "transform-decorators-legacy"
-    ],
-    "presets": [
-      "react-app"
-    ]
+    "start": "nodemon server.js",
+    "heroku-postbuild": "cd client && yarn && yarn run build"
   },
   "dependencies": {
     "@aoberoi/passport-slack": "^1.0.5",
