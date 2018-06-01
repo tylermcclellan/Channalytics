@@ -91,6 +91,7 @@ class Dashboard extends React.Component {
     const avgSentiment = u.channels[currentChannel].sentiment/messages
     this.setState({
       users: u,
+      globalUsers: u.users,
       personality: u.insights,
       currentUsers: users,
       channelList: c,
@@ -115,7 +116,7 @@ class Dashboard extends React.Component {
       ) : (
         <div>
           <Header currentChannel={this.state.currentChannel}/>
-          <Grid style={{outline: '3px 3px outset brown'}}>
+          <Grid>
             <Row>
               <Col md={3} lg={3}>
                 <Sidebar
@@ -127,6 +128,7 @@ class Dashboard extends React.Component {
               <Col md={9} lg={9} >
                 <PageBody
                   users={this.state.currentUsers}
+                  globalUsers={this.state.globalUsers}
                   names={this.state.chart.names} 
                   numbers={this.state.chart.numbers} 
                   messages={this.state.messages}

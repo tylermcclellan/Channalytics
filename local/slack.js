@@ -45,6 +45,7 @@ class User {
     this.numWords = 0
     this.sentiment = 0
     this.uniqueWords = []
+    this.messageDump = []
   }
 }
 
@@ -54,10 +55,14 @@ class User {
 const getChannelNames = async (token, uid) => {
   try {
     const web = createWebClient(token)
-    const list = await web.channels.list()
-    const filteredList = list.channels.filter(channel => channel.members.includes(uid))
-    const channelList = filteredList.map(channel => channel.name)
-    return channelList
+    const channels = await web.channels.list()
+    const groups = await web.groups.list()
+    const list = channels.channels
+      .concat(groups.groups)
+      .filter(channel => channel.is_mpim === false)
+    return (list
+      .filter(channel => channel.members.includes(uid))
+      .map(channel => channel.name))
   } catch(e) {
     console.log(e)
   }
@@ -67,9 +72,10 @@ module.exports.getChannelNames = getChannelNames
 //Returns a an array of channel objects
 const getChannels = async (web, uid) => {
   try {
-    const conversations = await web.channels.list()
-    const channels = conversations.channels.filter(channel => channel.members.includes(uid))
-    return channels
+    const channels = await web.channels.list()
+    const groups = await web.groups.list()
+    const conversations = channels.channels.concat(groups.groups)
+    return conversations.filter(channel => channel.members.includes(uid))
   } catch(e) {
     console.log(e)
   }
@@ -86,7 +92,7 @@ const filterMessages = () => {
 }
 const filterEmpty = i => i !== '' && !i.includes('http') && i.length > 1
 
-const filterUsers = i => i.real_name !== '' && !i.is_bot && !i.deleted
+const filterUsers = user => user.real_name !== '' && !user.is_bot && !user.deleted
 
 const reduceUsers = (accumulator, currentValue) => {
   accumulator[currentValue.id] = new User
@@ -106,8 +112,7 @@ const reduceChannels = (accumulator, currentValue) => {
 
 //Creates web client
 const createWebClient = verificationToken => {
-  const web = new WebClient(verificationToken)
-  return web
+  return new WebClient(verificationToken)
 }
 
 //Creates master user object
@@ -115,24 +120,26 @@ const createUserObject = async (web, uid) => {
   try {
     const channels = await getChannels(web, uid)
     const userList = await web.users.list()
-    const filteredUsers = userList.members.filter(filterUsers)
-    let u = {
+    const filteredList = userList.members.filter(filterUsers)
+    let master = {
       channels: {},
+      users: {},
       messageDump: '',
       insights: [],
-      //this is Russ's ID (placeholder for testing)
-      uid: 'U04QV5ULJ'
+      uid: uid
     }
+    master.users = filteredList.reduce(reduceUsers, {})
     const channelArr = channels.map(channel => {
       let c = new Channel
       c.name = channel.name
       c.id = channel.id
-      const users = filteredUsers.filter(user => channel.members.includes(user.id))
-      c.users = users.reduce(reduceUsers, {})
+      c.users = filteredList
+        .filter(user => channel.members.includes(user.id))
+        .reduce(reduceUsers, {})
       return c
     })
-    u.channels = channelArr.reduce(reduceChannels, {})
-    return u
+    master.channels = channelArr.reduce(reduceChannels, {})
+    return master
   } catch(e) {
     console.log(e)
   }
@@ -140,13 +147,14 @@ const createUserObject = async (web, uid) => {
 
 //Removes stop words and mentions from message and puts message in lowercase
 const cleanMessage = message => {
-  let words = message.text.split(" ")
-  words = words.map(item => {
-    item = item.toLowerCase()
-    return item.replace(filterMessages(), '')
-  })
-  words = words.filter(filterEmpty)
-  return words
+  return message.text
+    .split(" ")
+    .map(item => {
+      return item
+        .toLowerCase()
+        .replace(filterMessages(), '')
+    })
+    .filter(filterEmpty)
 }
 
 //async version of .forEach()
@@ -166,7 +174,9 @@ const getMessages = async (web, id, limit) => {
     let hasMore = initial.has_more
     let messages = [...initial.messages]
     let cursor = ''
-    if (initial.response_metadata !== undefined) cursor = initial.response_metadata.next_cursor
+    if (initial.response_metadata !== undefined) { 
+      cursor = initial.response_metadata.next_cursor
+    }
     let count = 1
     while(hasMore && count < 5) {
       response = await web.conversations.history({
@@ -175,7 +185,9 @@ const getMessages = async (web, id, limit) => {
         limit: limit
       })
       messages = messages.concat(response.messages)
-      if (response.response_metadata !== undefined) cursor = response.response_metadata.next_cursor
+      if (response.response_metadata !== undefined) { 
+        cursor = response.response_metadata.next_cursor
+      }
       hasMore = response.has_more
       count++
     }
@@ -190,11 +202,12 @@ const readConversation = async (web, u, limit=1000) => {
   const channels = Object.keys(u.channels)
   try {
     await asyncForEach(channels, async (channel) => {
+      console.log(`Grabbing from ${channel}`)
       const id = u.channels[channel].id
       const channelConvo = await getMessages(web, id, limit)
       channelConvo.forEach( message => {
         if (message.type === 'message' && u.channels[channel].users[message.user] !== undefined) {
-          if (message.user === u.uid && message.type === 'message') u.messageDump += '\n' + message.text
+          if (message.type === 'message') u.users[message.user].messageDump.push(message.text)
           const messageSentiment = sentiment(message.text).normalizedScore
           const words = cleanMessage(message)
           u.channels[channel].users[message.user].numMessages += 1
@@ -202,12 +215,12 @@ const readConversation = async (web, u, limit=1000) => {
           u.channels[channel].totalMessages += 1
           u.channels[channel].sentiment += messageSentiment
           words.forEach( word => {
-            if (u.channels[channel].users[message.user].words[word] === undefined) {
+            if (u.channels[channel].users[message.user].words[word] == undefined) {
               u.channels[channel].users[message.user].words[word] = 1
             } else {
               u.channels[channel].users[message.user].words[word] += 1
             }
-            if (u.channels[channel].totalWords[word] === undefined) {
+            if (u.channels[channel].totalWords[word] == undefined) {
               u.channels[channel].totalWords[word] = 1
             } else {
               u.channels[channel].totalWords[word] += 1
@@ -218,20 +231,14 @@ const readConversation = async (web, u, limit=1000) => {
         }
       })
     })
-    const markov = new Markov(u.messageDump.replace(/<.*/g, '').split('\n'))
-    markov.buildCorpusSync()
-    const result = markov.generateSentenceSync()
-    console.log(result.string)
   } catch(e) {
     console.log(e)
   }
 }
 
 const uniqueness = (word, u, user, channel) => {
-  const unique = 
-    (Math.pow(u.channels[channel].users[user].words[word], 2)/u.channels[channel].totalWords[word])*
+  return (Math.pow(u.channels[channel].users[user].words[word], 2)/u.channels[channel].totalWords[word])*
     (u.channels[channel].totalMessages/u.channels[channel].users[user].numMessages)
-  return unique
 }
 
 const promisePersonality = (messages) => {
@@ -284,7 +291,7 @@ const analyze = async (u) => {
         })
       })
     })
-    u.insights = await promisePersonality(u.messageDump)
+    u.insights = await promisePersonality(u.users[u.uid].messageDump)
   } catch(e) {
     u.insights = undefined
     console.log(e)

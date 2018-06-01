@@ -40,6 +40,7 @@ class UserList extends React.Component {
     const userList = Object.keys(props.users)
     const mappedList = userList.map( u => {
       const user = props.users[u]
+      const messageDump = props.globalUsers[u].messageDump
       const rawSource = user.profile.image_48
       const source = rawSource.replace(`\\`, ``)
       const name = user.real_name
@@ -55,6 +56,7 @@ class UserList extends React.Component {
         key={u}
         img={source}
         name={name}
+        messageDump={messageDump}
         percent={percent}
         messages={messages}
         words={user.words}

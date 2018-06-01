@@ -7,14 +7,12 @@ const express = require('express')
 const app = express()
 const slack = require('./local/slack')
 const crypto = require('./local/crypto')
+const markov = require('./local/markov')
 
 //Globals
 const PORT = 5001
 const CLIENT_ID = process.env.CLIENT_ID
 const CLIENT_SECRET = process.env.CLIENT_SECRET
-const WATSON_USERNAME = process.env.WATSON_USERNAME
-const WATSON_PASSWORD = process.env.WATSON_PASSWORD
-const WATSON_URL = process.env.WATSON_URL
 const token = process.env.ACCESS_TOKEN
 
 //Slack Authentication Setup
@@ -69,6 +67,11 @@ app.get('/api/run/:uid', decrypt, asyncRun, (req, res) => {
 app.get('/api/channels/:uid', decrypt, asyncChannels, (req, res) => {
   console.log("Returning channel object")
   res.send(req.data)
+})
+
+app.get('/api/impersonate/', (req, res) => {
+  console.log('impersonating')
+  res.send(markov.impersonate(req.body))
 })
 
 app.listen(PORT, () => console.log(`Listening on port ${PORT}`))

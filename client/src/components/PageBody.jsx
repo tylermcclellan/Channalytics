@@ -7,7 +7,6 @@ import { Row, Col, Well } from 'react-bootstrap'
 class PageBody extends React.Component {
   
   render() {
-    console.log(`Current Users: ${Object.keys(this.props.users)}`)
     return (
       <div>
         <Row>
@@ -29,7 +28,7 @@ class PageBody extends React.Component {
         </Row>
         <Row>
           <Col>
-            <UserList users={this.props.users} messages={this.props.messages}/>
+            <UserList users={this.props.users} messages={this.props.messages} globalUsers={this.props.globalUsers}/>
             <p>*Sentiment is a way of measuring the polarity of a messages. A positive sentiment means that the message is positive like "good" or "nice" and vice versa</p>
           </Col>
         </Row>
