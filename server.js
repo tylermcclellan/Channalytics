@@ -8,7 +8,6 @@ const path = require('path')
 const app = express()
 const slack = require('./local/slack')
 const crypto = require('./local/crypto')
-const markov = require('./local/markov')
 
 //Globals
 const PORT = 5001
@@ -67,6 +66,10 @@ app.get('/api/run/:uid', decrypt, asyncRun, (req, res) => {
 app.get('/api/channels/:uid', decrypt, asyncChannels, (req, res) => {
   console.log("Returning channel object")
   res.send(req.data)
+})
+
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname+'/client/build/index.html'));
 })
 
 app.listen(PORT, () => console.log(`Listening on port ${PORT}`))

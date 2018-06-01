@@ -1,7 +1,6 @@
 const { WebClient } = require('@slack/client')
 const sentiment = require('wink-sentiment')
 const PersonalityInsightsV3 = require('watson-developer-cloud/personality-insights/v3')
-const Markov = require('markov-strings')
 const black = "\x1b[30m"
 const red = "\x1b[31m"
 const green = "\x1b[32m"

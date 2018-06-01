@@ -12,6 +12,7 @@
     "start": "nodemon server.js",
     "heroku-postbuild": "cd client && yarn && yarn run build"
   },
+  "homepage": "http://tylermcclellan.github.io/channalytics",
   "dependencies": {
     "@aoberoi/passport-slack": "^1.0.5",
     "@slack/client": "^4.2.2",
@@ -20,9 +21,10 @@
     "dotenv": "^5.0.1",
     "express": "^4.16.3",
     "express-session": "^1.15.6",
+    "git": "^0.1.5",
     "lodash": "^4.17.10",
     "markov-chain-js": "^1.0.2",
-    "markov-strings": "^1.5.0",
+    "markovchain": "^1.0.2",
     "mobx": "^4.3.0",
     "mobx-react": "^5.1.2",
     "nodemon": "^1.17.5",

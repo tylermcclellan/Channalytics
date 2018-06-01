@@ -1,5 +1,5 @@
 import React from 'react'
-import Markov from 'markov-strings'
+import Markov from 'markovchain'
 import { 
   Popover,
   OverlayTrigger,
@@ -21,10 +21,8 @@ class Impression extends React.Component {
     const data = this.props.messageDump
     let content
     if (data.length > 35) {
-      const markov = new Markov(data)
-      markov.buildCorpusSync()
-      const result = markov.generateSentenceSync()
-      content = result.string
+      const markov = new Markov(data.join('\n'))
+      content = markov.start().process()
     } else {
       content = 'Not enough data'
     }
