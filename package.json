@@ -47,6 +47,8 @@
     "react-plotly.js": "^2.2.0",
     "react-router-dom": "^4.2.2",
     "react-wordcloud": "https://github.com/chrisrzhou/react-wordcloud.git",
+    "tsc": "^1.20150623.0",
+    "typescript": "^2.9.1",
     "watson-developer-cloud": "^3.4.2",
     "wink-sentiment": "^4.0.1"
   },
