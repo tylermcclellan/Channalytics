@@ -2,7 +2,7 @@
 console.log("Loading in!!")
 const dotenv = require('dotenv').config()
 const passport = require('passport')
-const SlackStrategy = require('passport-slack-oauth2').Strategy
+const SlackStrategy = require('@aoberoi/passport-slack').default.Strategy
 const express = require('express')
 const path = require('path')
 const app = express()
@@ -18,9 +18,10 @@ const token = process.env.ACCESS_TOKEN
 //Slack Authentication Setup
 passport.use(new SlackStrategy({
   clientID: CLIENT_ID,
-  clientSecret: CLIENT_SECRET
-}, (accessToken, refreshToken, profile, done) => {
-  done(null, profile)
+  clientSecret: CLIENT_SECRET,
+  callbackURL: 'http://channalytics.herokuapp.com/auth/slack/callback'
+}, (accessToken, scopes, team, {bot, incomingWebhook}, {user: userProfile, team: teamProfile}, done) => {
+  done(null, user)
 }))
 app.use(require('body-parser').urlencoded({ extended: true }))
 app.use(passport.initialize())
@@ -50,11 +51,11 @@ app.use(express.static(path.join(__dirname, 'client/build')))
 
 //OAuth callback url
 app.get('/auth/slack/callback',
-  passport.authorize('Slack', { failureRedirect: '/login' }),
+  passport.authorize('slack', { failureRedirect: '/login' }),
   (req, res) => {
     authed = true
     const uid = crypto.encrypt(req.account.id)
-    res.redirect('http://channalytics.herokuapp.com/#/dashboard/?' + uid)
+    res.redirect('http://channalytics.herokuapps.com/#/dashboard/?' + uid)
   }
 )
 

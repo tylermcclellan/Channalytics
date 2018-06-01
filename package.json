@@ -10,7 +10,10 @@
   "license": "MIT",
   "scripts": {
     "start": "nodemon server.js",
-    "heroku-postbuild": "cd client && yarn && yarn run build"
+    "heroku-postbuild": "cd client && yarn && yarn run build",
+    "client": "cd client && yarn start",
+    "server": "nodemon server.js",
+    "dev": "concurrently --kill-others-on-fail \"yarn server\" \"yarn client\""
   },
   "dependencies": {
     "@aoberoi/passport-slack": "^1.0.5",
@@ -22,14 +25,12 @@
     "express-session": "^1.15.6",
     "git": "^0.1.5",
     "lodash": "^4.17.10",
-    "markov-chain-js": "^1.0.2",
-    "markovchain": "^1.0.2",
+    "markov-chains": "^1.0.2",
     "mobx": "^4.3.0",
     "mobx-react": "^5.1.2",
     "nodemon": "^1.17.5",
     "npm": "^6.0.1",
     "passport": "^0.4.0",
-    "passport-slack": "^0.0.7",
     "passport-slack-oauth2": "^1.0.2",
     "plotly.js": "^1.37.1",
     "prop-types": "^15.6.1",

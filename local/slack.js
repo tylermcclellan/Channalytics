@@ -87,8 +87,13 @@ const findChannel = channel => i => {
   return i.name === channel
 }
 const filterMessages = () => {
-  return /<.*>|:.*:|[^A-Za-z]|\bjust\b|\bhave\b|\blike\b|\bby\b|\bthats\b|\bbut\b|\bwould\b|\bhim\b|\bwe\b|\bare\b|\bbe\b|\bfor\b|\bwith\b|\bhas\b|\bthe\b|\ba\b|\bi\b|\bI\b|\bon\b|\bto\b|\byou\b|\band\b|\bive\b|\bof\b|\bwhat\b|\bit\b|\bthat\b|\bthis\b|\bis\b|\bhe\b|\bher\b|\bshe\b|\bhe\b|\bin\b|\bwas\b|\bits\b|\bat\b|\bas\b|\ban\b|\bthey\b|\bare\b\bit\b|\byour\b|\bif\b|\bour\b/g
+  return /<.*>|:.*:|[^A-Za-z]|\bre\b|\bso\b|\bor\b|\bjust\b|\bhave\b|\blike\b|\bby\b|\bthats\b|\bbut\b|\bwould\b|\bhim\b|\bwe\b|\bare\b|\bbe\b|\bfor\b|\bwith\b|\bhas\b|\bthe\b|\ba\b|\bi\b|\bI\b|\bon\b|\bto\b|\byou\b|\band\b|\bive\b|\bof\b|\bwhat\b|\bit\b|\bthat\b|\bthis\b|\bis\b|\bhe\b|\bher\b|\bshe\b|\bhe\b|\bin\b|\bwas\b|\bits\b|\bat\b|\bas\b|\ban\b|\bthey\b|\bare\b\bit\b|\byour\b|\bif\b|\bour\b/g
 }
+
+const filterTags = () => {
+  return /<.*>|:.*:/g
+}
+
 const filterEmpty = i => i !== '' && !i.includes('http') && i.length > 1
 
 const filterUsers = user => user.real_name !== '' && !user.is_bot && !user.deleted
@@ -206,7 +211,8 @@ const readConversation = async (web, u, limit=1000) => {
       const channelConvo = await getMessages(web, id, limit)
       channelConvo.forEach( message => {
         if (message.type === 'message' && u.channels[channel].users[message.user] !== undefined) {
-          if (message.type === 'message') u.users[message.user].messageDump.push(message.text)
+          if (message.type === 'message') u.users[message.user].messageDump
+            .push(message.text.replace(filterTags(), ''))
           const messageSentiment = sentiment(message.text).normalizedScore
           const words = cleanMessage(message)
           u.channels[channel].users[message.user].numMessages += 1

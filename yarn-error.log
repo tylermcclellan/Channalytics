@@ -1,5 +1,5 @@
 Arguments: 
-  /Users/tylermcclellan/.nvm/versions/node/v8.1.4/bin/node /usr/local/Cellar/yarn/1.7.0/libexec/bin/yarn.js add markovchains
+  /Users/tylermcclellan/.nvm/versions/node/v8.1.4/bin/node /usr/local/Cellar/yarn/1.7.0/libexec/bin/yarn.js add @mjpearson/passport-slack
 
 PATH: 
   /Users/tylermcclellan/.nvm/versions/node/v8.1.4/bin:/Users/tylermcclellan/.rbenv/shims:/usr/local/opt/coreutils/libexec/gnubin:/Users/tylermcclellan/python/bin:/Users/tylermcclellan/Code/go/bin:/usr/local/share/npm/bin:/Users/tylermcclellan/bin:/Users/tylermcclellan/s:/usr/local/bin:/usr/local/sbin:/bin:/usr/bin:/usr/X11R6/bin:/usr/games:/sbin:/usr/sbin:/usr/X11R6/lib/xscreensaver:/usr/local/pgsql/bin:/opt/local/bin::/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/Users/tylermcclellan/.rvm/bin
@@ -14,7 +14,7 @@ Platform:
   darwin x64
 
 Trace: 
-  Error: https://registry.yarnpkg.com/markovchains: Not found
+  Error: https://registry.yarnpkg.com/@mjpearson%2fpassport-slack: Not found
       at Request.params.callback [as _callback] (/usr/local/Cellar/yarn/1.7.0/libexec/lib/cli.js:65656:18)
       at Request.self.callback (/usr/local/Cellar/yarn/1.7.0/libexec/lib/cli.js:134675:22)
       at emitTwo (events.js:125:13)
@@ -39,7 +39,10 @@ npm manifest:
     "license": "MIT",
     "scripts": {
       "start": "nodemon server.js",
-      "heroku-postbuild": "cd client && yarn && yarn run build"
+      "heroku-postbuild": "cd client && yarn && yarn run build",
+      "client": "cd client && yarn start",
+      "server": "nodemon server.js",
+      "dev": "concurrently --kill-others-on-fail \"yarn server\" \"yarn client\""
     },
     "dependencies": {
       "@aoberoi/passport-slack": "^1.0.5",
@@ -49,8 +52,10 @@ npm manifest:
       "dotenv": "^5.0.1",
       "express": "^4.16.3",
       "express-session": "^1.15.6",
+      "git": "^0.1.5",
       "lodash": "^4.17.10",
       "markov-chain-js": "^1.0.2",
+      "markovchain": "^1.0.2",
       "mobx": "^4.3.0",
       "mobx-react": "^5.1.2",
       "nodemon": "^1.17.5",
@@ -2513,6 +2518,12 @@ Lockfile:
     dependencies:
       assert-plus "^1.0.0"
   
+  git@^0.1.5:
+    version "0.1.5"
+    resolved "https://registry.yarnpkg.com/git/-/git-0.1.5.tgz#9ef62df93f851c27542143bf52d1c68b1017ca15"
+    dependencies:
+      mime "1.2.9"
+  
   gl-axes3d@^1.2.5:
     version "1.2.7"
     resolved "https://registry.yarnpkg.com/gl-axes3d/-/gl-axes3d-1.2.7.tgz#c0e491c28993060662fab286deb45ae5b67c9442"
@@ -3967,6 +3978,12 @@ Lockfile:
     version "1.0.2"
     resolved "https://registry.yarnpkg.com/markov-chain-js/-/markov-chain-js-1.0.2.tgz#477cc42640a69c2595a3ea9958315d54e199f858"
   
+  markovchain@^1.0.2:
+    version "1.0.2"
+    resolved "https://registry.yarnpkg.com/markovchain/-/markovchain-1.0.2.tgz#58b38643fb6093cd5b62455b7b1e7bbfe56d7e53"
+    dependencies:
+      pick-one-by-weight "~1.0.0"
+  
   mat4-decompose@^1.0.3:
     version "1.0.4"
     resolved "https://registry.yarnpkg.com/mat4-decompose/-/mat4-decompose-1.0.4.tgz#65eb4fe39d70878f7a444eb4624d52f7e7eb2faf"
@@ -4058,6 +4075,10 @@ Lockfile:
     resolved "https://registry.yarnpkg.com/mime-types/-/mime-types-2.1.18.tgz#6f323f60a83d11146f831ff11fd66e2fe5503bb8"
     dependencies:
       mime-db "~1.33.0"
+  
+  mime@1.2.9:
+    version "1.2.9"
+    resolved "https://registry.yarnpkg.com/mime/-/mime-1.2.9.tgz#009cd40867bd35de521b3b966f04e2f8d4d13d09"
   
   mime@1.4.1:
     version "1.4.1"
@@ -5177,6 +5198,10 @@ Lockfile:
   pick-by-alias@^1.0.0, pick-by-alias@^1.1.0, pick-by-alias@^1.1.1, pick-by-alias@^1.2.0:
     version "1.2.0"
     resolved "https://registry.yarnpkg.com/pick-by-alias/-/pick-by-alias-1.2.0.tgz#5f7cb2b1f21a6e1e884a0c87855aa4a37361107b"
+  
+  pick-one-by-weight@~1.0.0:
+    version "1.0.2"
+    resolved "https://registry.yarnpkg.com/pick-one-by-weight/-/pick-one-by-weight-1.0.2.tgz#fa0893276c848c8b7dd2f446e99f89d83c4cee86"
   
   pify@^3.0.0:
     version "3.0.0"

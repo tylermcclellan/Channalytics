@@ -3460,6 +3460,10 @@ istanbul-reports@^1.1.3:
   dependencies:
     handlebars "^4.0.3"
 
+javascript-stringify@^1.1.0:
+  version "1.6.0"
+  resolved "https://registry.yarnpkg.com/javascript-stringify/-/javascript-stringify-1.6.0.tgz#142d111f3a6e3dae8f4a9afd77d45855b5a9cce3"
+
 jest-changed-files@^20.0.3:
   version "20.0.3"
   resolved "https://registry.yarnpkg.com/jest-changed-files/-/jest-changed-files-20.0.3.tgz#9394d5cc65c438406149bef1bf4d52b68e03e3f8"
@@ -4001,6 +4005,12 @@ makeerror@1.0.x:
 map-obj@^1.0.0, map-obj@^1.0.1:
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/map-obj/-/map-obj-1.0.1.tgz#d933ceb9205d82bdcf4886f6742bdc2b4dea146d"
+
+markov-chains@^1.0.2:
+  version "1.0.2"
+  resolved "https://registry.yarnpkg.com/markov-chains/-/markov-chains-1.0.2.tgz#49105365981b8b910309904413982b696a2f7c14"
+  dependencies:
+    javascript-stringify "^1.1.0"
 
 math-expression-evaluator@^1.2.14:
   version "1.2.17"
