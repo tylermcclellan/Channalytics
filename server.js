@@ -54,7 +54,7 @@ app.get('/auth/slack/callback',
   (req, res) => {
     authed = true
     const uid = crypto.encrypt(req.account.id)
-    res.redirect('http://localhost:3000/#/dashboard/?' + uid)
+    res.redirect('http://channalytics.herokuapp.com/#/dashboard/?' + uid)
   }
 )
 
