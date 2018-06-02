@@ -20,7 +20,7 @@ class Impression extends React.Component {
   handleClick = e => {
     const content = this.props.messageDump.length > 35 ? (
       new Markov(this.props.messageDump
-        .join('\n')
+        .join('\n'))
         .start(
           this.props.messageDump[Math.random()*5000%this.props.messageDump.length].split(' ')[0]
         )
