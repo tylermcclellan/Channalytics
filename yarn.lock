@@ -3476,10 +3476,6 @@ isurl@^1.0.0-alpha5:
     has-to-string-tag-x "^1.2.0"
     is-object "^1.0.1"
 
-javascript-stringify@^1.1.0:
-  version "1.6.0"
-  resolved "https://registry.yarnpkg.com/javascript-stringify/-/javascript-stringify-1.6.0.tgz#142d111f3a6e3dae8f4a9afd77d45855b5a9cce3"
-
 js-tokens@^3.0.0, js-tokens@^3.0.2:
   version "3.0.2"
   resolved "https://registry.yarnpkg.com/js-tokens/-/js-tokens-3.0.2.tgz#9866df395102130e38f7f996bceb65443209c25b"
@@ -3878,11 +3874,11 @@ marching-simplex-table@^1.0.0:
   dependencies:
     convex-hull "^1.0.3"
 
-markov-chains@^1.0.2:
+markovchain@^1.0.2:
   version "1.0.2"
-  resolved "https://registry.yarnpkg.com/markov-chains/-/markov-chains-1.0.2.tgz#49105365981b8b910309904413982b696a2f7c14"
+  resolved "https://registry.yarnpkg.com/markovchain/-/markovchain-1.0.2.tgz#58b38643fb6093cd5b62455b7b1e7bbfe56d7e53"
   dependencies:
-    javascript-stringify "^1.1.0"
+    pick-one-by-weight "~1.0.0"
 
 mat4-decompose@^1.0.3:
   version "1.0.4"
@@ -5076,6 +5072,10 @@ permutation-rank@^1.0.0:
 pick-by-alias@^1.0.0, pick-by-alias@^1.1.0, pick-by-alias@^1.1.1, pick-by-alias@^1.2.0:
   version "1.2.0"
   resolved "https://registry.yarnpkg.com/pick-by-alias/-/pick-by-alias-1.2.0.tgz#5f7cb2b1f21a6e1e884a0c87855aa4a37361107b"
+
+pick-one-by-weight@~1.0.0:
+  version "1.0.2"
+  resolved "https://registry.yarnpkg.com/pick-one-by-weight/-/pick-one-by-weight-1.0.2.tgz#fa0893276c848c8b7dd2f446e99f89d83c4cee86"
 
 pify@^3.0.0:
   version "3.0.0"
