@@ -1,5 +1,5 @@
 import React from 'react'
-import Markov from 'markov-chains'
+import Markov from 'markov-chains/dist/markov-chains.js'
 import { 
   Popover,
   OverlayTrigger,
