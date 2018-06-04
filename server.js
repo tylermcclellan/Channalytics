@@ -20,8 +20,9 @@ passport.use(new SlackStrategy({
   clientID: CLIENT_ID,
   clientSecret: CLIENT_SECRET,
   callbackURL: 'http://channalytics.herokuapp.com/auth/slack/callback'
-}, (accessToken, scopes, team, {bot, incomingWebhook}, {user: userProfile, team: teamProfile}, done) => {
-  done(null, user)
+}, (accessToken, scopes, team, {bot, incomingWebhook}, profile, done) => {
+  console.log(profile.user)
+  done(null, profile.user)
 }))
 app.use(require('body-parser').urlencoded({ extended: true }))
 app.use(passport.initialize())
@@ -55,7 +56,7 @@ app.get('/auth/slack/callback',
   (req, res) => {
     authed = true
     const uid = crypto.encrypt(req.account.id)
-    res.redirect('http://channalytics.herokuapps.com/#/dashboard/?' + uid)
+    res.redirect('http://channalytics.herokuapp.com/#/dashboard/?' + uid)
   }
 )
 

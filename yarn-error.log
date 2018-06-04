@@ -1,5 +1,5 @@
 Arguments: 
-  /Users/tylermcclellan/.nvm/versions/node/v8.1.4/bin/node /usr/local/Cellar/yarn/1.7.0/libexec/bin/yarn.js add @mjpearson/passport-slack
+  /Users/tylermcclellan/.nvm/versions/node/v8.1.4/bin/node /usr/local/Cellar/yarn/1.7.0/libexec/bin/yarn.js add @substack/node-markov
 
 PATH: 
   /Users/tylermcclellan/.nvm/versions/node/v8.1.4/bin:/Users/tylermcclellan/.rbenv/shims:/usr/local/opt/coreutils/libexec/gnubin:/Users/tylermcclellan/python/bin:/Users/tylermcclellan/Code/go/bin:/usr/local/share/npm/bin:/Users/tylermcclellan/bin:/Users/tylermcclellan/s:/usr/local/bin:/usr/local/sbin:/bin:/usr/bin:/usr/X11R6/bin:/usr/games:/sbin:/usr/sbin:/usr/X11R6/lib/xscreensaver:/usr/local/pgsql/bin:/opt/local/bin::/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/Users/tylermcclellan/.rvm/bin
@@ -14,7 +14,7 @@ Platform:
   darwin x64
 
 Trace: 
-  Error: https://registry.yarnpkg.com/@mjpearson%2fpassport-slack: Not found
+  Error: https://registry.yarnpkg.com/@substack%2fnode-markov: Not found
       at Request.params.callback [as _callback] (/usr/local/Cellar/yarn/1.7.0/libexec/lib/cli.js:65656:18)
       at Request.self.callback (/usr/local/Cellar/yarn/1.7.0/libexec/lib/cli.js:134675:22)
       at emitTwo (events.js:125:13)
@@ -54,14 +54,11 @@ npm manifest:
       "express-session": "^1.15.6",
       "git": "^0.1.5",
       "lodash": "^4.17.10",
-      "markov-chain-js": "^1.0.2",
-      "markovchain": "^1.0.2",
       "mobx": "^4.3.0",
       "mobx-react": "^5.1.2",
       "nodemon": "^1.17.5",
       "npm": "^6.0.1",
       "passport": "^0.4.0",
-      "passport-slack": "^0.0.7",
       "passport-slack-oauth2": "^1.0.2",
       "plotly.js": "^1.37.1",
       "prop-types": "^15.6.1",
@@ -3974,16 +3971,6 @@ Lockfile:
     dependencies:
       convex-hull "^1.0.3"
   
-  markov-chain-js@^1.0.2:
-    version "1.0.2"
-    resolved "https://registry.yarnpkg.com/markov-chain-js/-/markov-chain-js-1.0.2.tgz#477cc42640a69c2595a3ea9958315d54e199f858"
-  
-  markovchain@^1.0.2:
-    version "1.0.2"
-    resolved "https://registry.yarnpkg.com/markovchain/-/markovchain-1.0.2.tgz#58b38643fb6093cd5b62455b7b1e7bbfe56d7e53"
-    dependencies:
-      pick-one-by-weight "~1.0.0"
-  
   mat4-decompose@^1.0.3:
     version "1.0.4"
     resolved "https://registry.yarnpkg.com/mat4-decompose/-/mat4-decompose-1.0.4.tgz#65eb4fe39d70878f7a444eb4624d52f7e7eb2faf"
@@ -5087,27 +5074,12 @@ Lockfile:
       uid2 "0.0.x"
       utils-merge "1.x.x"
   
-  passport-oauth@~0.1.1:
-    version "0.1.15"
-    resolved "https://registry.yarnpkg.com/passport-oauth/-/passport-oauth-0.1.15.tgz#fb74e0afe84614bfa256c5fc716cc56bbfc8cec0"
-    dependencies:
-      oauth "0.9.x"
-      passport "~0.1.1"
-      pkginfo "0.2.x"
-  
   passport-slack-oauth2@^1.0.2:
     version "1.0.2"
     resolved "https://registry.yarnpkg.com/passport-slack-oauth2/-/passport-slack-oauth2-1.0.2.tgz#fce8032ddc330e13514114024e4f60b09d709dc7"
     dependencies:
       passport-oauth2 "^1.4.0"
       pkginfo "^0.4.1"
-  
-  passport-slack@^0.0.7:
-    version "0.0.7"
-    resolved "https://registry.yarnpkg.com/passport-slack/-/passport-slack-0.0.7.tgz#167eb80f0ab622d2156e7cae7055e16d0b1890d0"
-    dependencies:
-      passport-oauth "~0.1.1"
-      pkginfo "0.2.x"
   
   passport-strategy@1.x.x:
     version "1.0.0"
@@ -5119,13 +5091,6 @@ Lockfile:
     dependencies:
       passport-strategy "1.x.x"
       pause "0.0.1"
-  
-  passport@~0.1.1:
-    version "0.1.18"
-    resolved "https://registry.yarnpkg.com/passport/-/passport-0.1.18.tgz#c8264479dcb6414cadbb66752d12b37e0b6525a1"
-    dependencies:
-      pause "0.0.1"
-      pkginfo "0.2.x"
   
   path-dirname@^1.0.0:
     version "1.0.2"
@@ -5199,17 +5164,9 @@ Lockfile:
     version "1.2.0"
     resolved "https://registry.yarnpkg.com/pick-by-alias/-/pick-by-alias-1.2.0.tgz#5f7cb2b1f21a6e1e884a0c87855aa4a37361107b"
   
-  pick-one-by-weight@~1.0.0:
-    version "1.0.2"
-    resolved "https://registry.yarnpkg.com/pick-one-by-weight/-/pick-one-by-weight-1.0.2.tgz#fa0893276c848c8b7dd2f446e99f89d83c4cee86"
-  
   pify@^3.0.0:
     version "3.0.0"
     resolved "https://registry.yarnpkg.com/pify/-/pify-3.0.0.tgz#e5a4acd2c101fdf3d9a4d07f0dbc4db49dd28176"
-  
-  pkginfo@0.2.x:
-    version "0.2.3"
-    resolved "https://registry.yarnpkg.com/pkginfo/-/pkginfo-0.2.3.tgz#7239c42a5ef6c30b8f328439d9b9ff71042490f8"
   
   pkginfo@^0.4.1:
     version "0.4.1"

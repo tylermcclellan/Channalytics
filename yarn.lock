@@ -1588,6 +1588,10 @@ decamelize@^1.0.0, decamelize@^1.1.1:
   version "1.2.0"
   resolved "https://registry.yarnpkg.com/decamelize/-/decamelize-1.2.0.tgz#f6534d15148269b20352e7bee26f501f9a191290"
 
+deck@>=0.0.3:
+  version "0.0.4"
+  resolved "https://registry.yarnpkg.com/deck/-/deck-0.0.4.tgz#d4d89d460ba81ee820b04a05a7d0dce64d8b730a"
+
 decode-uri-component@^0.2.0:
   version "0.2.0"
   resolved "https://registry.yarnpkg.com/decode-uri-component/-/decode-uri-component-0.2.0.tgz#eb3913333458775cb84cd1a1fae062106bb87545"
@@ -3020,6 +3024,12 @@ has@^1.0.0, has@^1.0.1, has@~1.0.1:
   dependencies:
     function-bind "^1.0.2"
 
+hashish@>=0.0.2:
+  version "0.0.4"
+  resolved "https://registry.yarnpkg.com/hashish/-/hashish-0.0.4.tgz#6d60bc6ffaf711b6afd60e426d077988014e6554"
+  dependencies:
+    traverse ">=0.2.4"
+
 hawk@~6.0.2:
   version "6.0.2"
   resolved "https://registry.yarnpkg.com/hawk/-/hawk-6.0.2.tgz#af4d914eb065f9b5ce4d9d11c1cb2126eecc3038"
@@ -3579,6 +3589,10 @@ lazy-property@~1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/lazy-property/-/lazy-property-1.0.0.tgz#84ddc4b370679ba8bd4cdcfa4c06b43d57111147"
 
+lazy@>=1.0.3:
+  version "1.0.11"
+  resolved "https://registry.yarnpkg.com/lazy/-/lazy-1.0.11.tgz#daa068206282542c088288e975c297c1ae77b690"
+
 lcid@^1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/lcid/-/lcid-1.0.0.tgz#308accafa0bc483a3867b4b6f2b9506251d1b835"
@@ -3874,11 +3888,13 @@ marching-simplex-table@^1.0.0:
   dependencies:
     convex-hull "^1.0.3"
 
-markovchain@^1.0.2:
-  version "1.0.2"
-  resolved "https://registry.yarnpkg.com/markovchain/-/markovchain-1.0.2.tgz#58b38643fb6093cd5b62455b7b1e7bbfe56d7e53"
+markov@^0.0.7:
+  version "0.0.7"
+  resolved "https://registry.yarnpkg.com/markov/-/markov-0.0.7.tgz#35ace82ae26133f719e1608d21f0cbc21452abe3"
   dependencies:
-    pick-one-by-weight "~1.0.0"
+    deck ">=0.0.3"
+    hashish ">=0.0.2"
+    lazy ">=1.0.3"
 
 mat4-decompose@^1.0.3:
   version "1.0.4"
@@ -5072,10 +5088,6 @@ permutation-rank@^1.0.0:
 pick-by-alias@^1.0.0, pick-by-alias@^1.1.0, pick-by-alias@^1.1.1, pick-by-alias@^1.2.0:
   version "1.2.0"
   resolved "https://registry.yarnpkg.com/pick-by-alias/-/pick-by-alias-1.2.0.tgz#5f7cb2b1f21a6e1e884a0c87855aa4a37361107b"
-
-pick-one-by-weight@~1.0.0:
-  version "1.0.2"
-  resolved "https://registry.yarnpkg.com/pick-one-by-weight/-/pick-one-by-weight-1.0.2.tgz#fa0893276c848c8b7dd2f446e99f89d83c4cee86"
 
 pify@^3.0.0:
   version "3.0.0"
@@ -6860,6 +6872,10 @@ tough-cookie@~2.3.3:
   resolved "https://registry.yarnpkg.com/tough-cookie/-/tough-cookie-2.3.4.tgz#ec60cee38ac675063ffc97a5c18970578ee83655"
   dependencies:
     punycode "^1.4.1"
+
+traverse@>=0.2.4:
+  version "0.6.6"
+  resolved "https://registry.yarnpkg.com/traverse/-/traverse-0.6.6.tgz#cbdf560fd7b9af632502fed40f918c157ea97137"
 
 tree-kill@^1.1.0:
   version "1.2.0"

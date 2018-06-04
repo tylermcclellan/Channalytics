@@ -1,5 +1,5 @@
 import React from 'react'
-import Markov from 'markovchain'
+import Markov from 'markov'
 import { 
   Popover,
   OverlayTrigger,
@@ -18,17 +18,22 @@ class Impression extends React.Component {
   }
   
   handleClick = e => {
-    const content = this.props.messageDump.length > 35 ? (
-      new Markov(this.props.messageDump
-        .join('\n'))
-        .start(
-          this.props.messageDump[Math.random()*5000%this.props.messageDump.length].split(' ')[0]
-        )
-        .process()
-        ) : 'Not enough data'
+    console.log(this.props.messageDump)
+    let response
+    if (this.props.messageDump.length > 35) {
+      const m = Markov(2)
+      const messages = this.props.messageDump.length > 1000 ? (
+        this.props.messageDump.slice(0, this.props.messageDump.length/2).join('\n')
+      ):(
+        this.props.messageDump.join('\n')
+      )
+      m.seed(messages)
+      response = m.forward(m.pick(), 10).join(' ')
+    } else {
+      response = 'Not enough data.'
+    }
     this.setState({ 
-      target: e.target,
-      content: content
+      content: response
     })
   }
 
@@ -42,7 +47,6 @@ class Impression extends React.Component {
       <span>
         <OverlayTrigger
           trigger='click'
-          target={this.state.target}
           rootClose
           placement='left'
           overlay={filler}>
