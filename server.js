@@ -19,7 +19,7 @@ const token = process.env.ACCESS_TOKEN
 passport.use(new SlackStrategy({
   clientID: CLIENT_ID,
   clientSecret: CLIENT_SECRET,
-  callbackURL: 'http://localhost:5001/auth/slack/callback'
+  callbackURL: 'http://localhost:5000/auth/slack/callback'
 }, (accessToken, scopes, team, {bot, incomingWebhook}, profile, done) => {
   console.log(profile.user)
   done(null, profile.user)

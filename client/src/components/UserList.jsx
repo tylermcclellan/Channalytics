@@ -17,9 +17,7 @@ class UserList extends React.Component {
   //Handles sorting the user list when a category title is clicked
   //TODO: add in arrow icons to make sorting functionality more obvious
   handleSort(e){
-    const rawText = e.target.innerHTML
-    const loweredText = rawText.toLowerCase()
-    let sorter = loweredText
+    let sorter = e.target.innerHTML.toLowerCase()
     switch(loweredText) {
       case 'percentage':
         sorter = 'percent'
@@ -31,9 +29,7 @@ class UserList extends React.Component {
         break
     }
     //TODO: fix weird sorting bug
-    const userList = this.state.userList
-    const sortedList = _.sortBy(userList, [item => item.props[sorter]])
-    let list = sortedList
+    let list = _.sortBy(this.state.userList, [item => item.props[sorter]])
     if (sorter !== 'name') list = list.reverse()
     this.setState({ userList: list })
   }

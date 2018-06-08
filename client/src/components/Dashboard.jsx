@@ -12,14 +12,13 @@ import store from '../stores/AppStore'
 import { observer } from 'mobx-react'
 import '../App.css'
 
-
 class Dashboard extends React.Component {
   constructor(props) {
     super(props)
     this.handleChannelClick = this.handleChannelClick.bind(this)
   }
 
-  //API call to backend
+  //API call to get users from backend
   async getUsers(){
     try {
       const response = await fetch(`/api/run/${this.props.uid}/`)
@@ -31,7 +30,7 @@ class Dashboard extends React.Component {
     }
   }
 
-  //API call to backend
+  //API call to get channel list from backend
   async getChannels(){
     try {
       const response = await fetch(`/api/channels/${this.props.uid}`)
@@ -43,12 +42,12 @@ class Dashboard extends React.Component {
     }
   }
 
-  //updates information in PageBody when a channel name is clicked
+  //updates current channel in store when a channel name is clicked
   handleChannelClick(e) {
     store.setCurrentChannel(e.target.innerHTML)
   }
 
-  //Loading function
+  //Initializes store with users and channels
   async componentDidMount() {
     const u = await this.getUsers()
     const c = await this.getChannels()
@@ -58,7 +57,6 @@ class Dashboard extends React.Component {
       loaded: true
     })
   }
-
 
   render() {
     const loading = store.loaded ? false : true

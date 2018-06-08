@@ -13,10 +13,11 @@ class Impression extends React.Component {
     this.state = { show: false }
 
     this.handleClick = this.handleClick.bind(this)
+    this.markov = this.markov.bind(this)
   }
 
-  //Creates impression from Markov Chain
-  handleClick = e => {
+  //creates a markov chain from a user's raw messages and returns a walk of the chain
+  markov(){
     let response
     if (this.props.messageDump.length > 35) {
       const m = Markov(2)
@@ -30,8 +31,14 @@ class Impression extends React.Component {
     } else {
       response = 'Not enough data.'
     }
+    return response
+  }
+
+  //Handles creating a markov chain when user icon is pressed
+  handleClick = e => {
+    const content = markov() 
     this.setState({ 
-      content: response
+      content: content
     })
   }
 
@@ -62,4 +69,3 @@ class Impression extends React.Component {
 }
 
 export default Impression
-
