@@ -1,4 +1,4 @@
-import { observable, computed, decorate } from 'mobx'
+import { observable, computed, action, decorate } from 'mobx'
 
 class AppStore {
   currentChannel = 'general'
@@ -6,7 +6,7 @@ class AppStore {
   channelList = []
   loaded = false
 
-  chart = () => {
+  get chart(){
     if (this.users !== {}) {
       let chartArrs = {}
       const userKeys = Object.keys(this.users.channels[this.currentChannel].users)
@@ -14,6 +14,18 @@ class AppStore {
       chartArrs.numbers = userKeys.map(user=> this.users.channels[this.currentChannel].users[user].numMessages)
       return chartArrs
     }
+  }
+  initStore(params){
+    this.users = params.users
+    this.channelList = params.channelList
+    this.loaded = params.loaded
+  }
+  setCurrentChannel(channel){
+    console.log('in setting current channel')
+    this.currentChannel = channel
+  }
+  get globalUsers(){
+    if (this.users !== {}) return this.users.users
   }
   get currentUsers(){
     if (this.users !== {}) return this.users.channels[this.currentChannel].users
@@ -46,6 +58,11 @@ decorate(AppStore, {
   channelList: observable,
   loaded: observable,
   chart: computed,
+  setCurrentChannel: action,
+  setUsers: action,
+  setChannelList: action,
+  setLoaded: action,
+  globalUsers: computed,
   currentUsers: computed,
   numUsers: computed,
   messages: computed,

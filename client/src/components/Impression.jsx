@@ -10,21 +10,18 @@ class Impression extends React.Component {
   constructor(props, context) {
     super(props, context)
 
-    this.state = {
-      show: false
-    }
+    this.state = { show: false }
 
     this.handleClick = this.handleClick.bind(this)
   }
 
   //Creates impression from Markov Chain
   handleClick = e => {
-    console.log(this.props.messageDump)
     let response
     if (this.props.messageDump.length > 35) {
       const m = Markov(2)
       const messages = this.props.messageDump.length > 2000 ? (
-        this.props.messageDump.slice(0, this.props.messageDump.length/2).join('\n')
+        this.props.messageDump.slice(0, 2000).join('\n')
       ):(
         this.props.messageDump.join('\n')
       )

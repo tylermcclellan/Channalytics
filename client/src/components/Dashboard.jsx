@@ -8,21 +8,14 @@ import Sidebar from './Sidebar'
 import PageBody from './PageBody'
 import Header from './Header'
 import LoadingPage from './LoadingPage'
+import store from '../stores/AppStore'
+import { observer } from 'mobx-react'
 import '../App.css'
 
 
 class Dashboard extends React.Component {
   constructor(props) {
     super(props)
-    console.log(this.props.store ? 'store is full' : 'store is empty')
-    this.state = { 
-      currentChannel: 'general',
-      users: {},
-      currentUsers: {},
-      channelList: [],
-      chart: {},
-      loaded: false
-    }
     this.handleChannelClick = this.handleChannelClick.bind(this)
   }
 
@@ -31,7 +24,6 @@ class Dashboard extends React.Component {
     try {
       const response = await fetch(`/api/run/${this.props.uid}/`)
       const body = await response.json()
-      console.log(body)
       if (response.status !== 200) throw Error(body.message)
       return body
     } catch(e) {
@@ -51,96 +43,53 @@ class Dashboard extends React.Component {
     }
   }
 
-  initChart(users) {
-    let chartArrs = {}
-    const userKeys = Object.keys(users)
-    chartArrs.names = userKeys.map(user=> users[user].real_name)
-    chartArrs.numbers = userKeys.map(user=> users[user].numMessages)
-    return chartArrs
-  }
-
   //updates information in PageBody when a channel name is clicked
-  async handleChannelClick(e) {
-    const channel = e.target.innerHTML
-    const u = this.state.users
-    const users = this.state.users.channels[channel].users
-    const chart = this.initChart(users)
-    const numUsers = Object.keys(users).length
-    const messages = u.channels[channel].totalMessages
-    const wordCount = u.channels[channel].totalWordCount
-    const avgLength = wordCount/messages
-    const avgSentiment = u.channels[channel].sentiment/messages
-    this.setState({ 
-      currentChannel: channel,
-      currentUsers: users,
-      chart: chart,
-      numUsers: numUsers,
-      messages: messages,
-      wordCount: wordCount,
-      avgLength: avgLength,
-      avgSentiment: avgSentiment
-    })
+  handleChannelClick(e) {
+    store.setCurrentChannel(e.target.innerHTML)
   }
 
   //Loading function
   async componentDidMount() {
-    const currentChannel = this.state.currentChannel
     const u = await this.getUsers()
-    const users = u.channels[currentChannel].users
     const c = await this.getChannels()
-    const chart = this.initChart(users)
-    const numUsers = Object.keys(users).length
-    const messages = u.channels[currentChannel].totalMessages
-    const wordCount = u.channels[currentChannel].totalWordCount
-    const avgLength = wordCount/messages
-    const avgSentiment = u.channels[currentChannel].sentiment/messages
-    this.setState({
+    store.initStore({
       users: u,
-      globalUsers: u.users,
-      personality: u.insights,
-      currentUsers: users,
       channelList: c,
-      chart: chart,
-      numUsers: numUsers,
-      messages: messages,
-      avgLength: avgLength,
-      avgSentiment: avgSentiment,
-      wordCount: wordCount,
       loaded: true
     })
   }
 
 
   render() {
-    const loading = this.state.loaded ? false : true
-    const requestSuccess = this.state.personality !== undefined ? true : false
+    const loading = store.loaded ? false : true
+    const requestSuccess = store.personality !== undefined ? true : false
     return (
       <div className='App'>
       { loading ? (
         <LoadingPage/>
       ) : (
         <div>
-          <Header currentChannel={this.state.currentChannel}/>
+          <Header currentChannel={store.currentChannel}/>
           <Grid>
             <Row>
               <Col md={3} lg={3}>
                 <Sidebar
-                  channels={this.state.channelList} 
+                  channels={store.channelList} 
                   handleClick={this.handleChannelClick}
-                  personality={this.state.personality} 
+                  personality={store.personality} 
                   showPersonality={requestSuccess}/>
               </Col>
               <Col md={9} lg={9} >
                 <PageBody
-                  users={this.state.currentUsers}
-                  globalUsers={this.state.globalUsers}
-                  names={this.state.chart.names} 
-                  numbers={this.state.chart.numbers} 
-                  messages={this.state.messages}
-                  words={this.state.wordCount}
-                  numUsers={this.state.numUsers}
-                  avgLength={this.state.avgLength}
-                  avgSentiment={this.state.avgSentiment}/>
+                  users={store.currentUsers}
+                  globalUsers={store.globalUsers}
+                  names={store.chart.names} 
+                  numbers={store.chart.numbers} 
+                  messages={store.messages}
+                  words={store.wordCount}
+                  numUsers={store.numUsers}
+                  avgLength={store.avgLength}
+                  avgSentiment={store.avgSentiment}/>
               </Col>
             </Row>
           </Grid>
@@ -151,5 +100,5 @@ class Dashboard extends React.Component {
   }
 }
 
-export default Dashboard
+export default observer(Dashboard)
 

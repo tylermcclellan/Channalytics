@@ -1,5 +1,5 @@
 {
-  "name": "create-react-app-express",
+  "name": "channalytics",
   "version": "0.1.0",
   "license": "MIT",
   "dependencies": {
@@ -14,5 +14,5 @@
     "test": "react-scripts test --env=jsdom",
     "eject": "react-scripts eject"
   },
-  "proxy": "http://localhost:5001/"
+  "proxy": "http://localhost:5000/"
 }

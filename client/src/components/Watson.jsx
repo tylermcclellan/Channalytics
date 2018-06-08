@@ -6,7 +6,6 @@ const round = (value, decimals) => {
 
 class Watson extends React.Component {
   render() {
-    console.log(this.props.personality)
     return (
       <div className='ChannelList'>
         <h3 className='ChannelListTitle'>Your Big 5 Personality Traits</h3>
