@@ -21,7 +21,6 @@ passport.use(new SlackStrategy({
   clientSecret: CLIENT_SECRET,
   callbackURL: 'http://localhost:5000/auth/slack/callback'
 }, (accessToken, scopes, team, {bot, incomingWebhook}, profile, done) => {
-  console.log(profile.user)
   done(null, profile.user)
 }))
 app.use(require('body-parser').urlencoded({ extended: true }))
