@@ -2,6 +2,7 @@ import React from 'react'
 import { Switch, Redirect, Route } from 'react-router-dom'
 import Dashboard from './components/Dashboard'
 import HomePage from './components/HomePage'
+import AppStore from './stores/AppStore'
 
 export class MainRouter extends React.Component {
   getToken = () => {
@@ -12,6 +13,7 @@ export class MainRouter extends React.Component {
 
   render() {
     const token = this.getToken()
+    console.log(AppStore)
     return (
       <Switch>
         <Redirect exact from='/' to='/login' />

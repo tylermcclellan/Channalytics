@@ -14,6 +14,7 @@ import '../App.css'
 class Dashboard extends React.Component {
   constructor(props) {
     super(props)
+    console.log(this.props.store ? 'store is full' : 'store is empty')
     this.state = { 
       currentChannel: 'general',
       users: {},

@@ -15,27 +15,27 @@ class AppStore {
       return chartArrs
     }
   }
-  currentUsers = () => {
+  get currentUsers(){
     if (this.users !== {}) return this.users.channels[this.currentChannel].users
   }
-  numUsers = () => {
+  get numUsers(){
     if (this.users !== {}) return Object.keys(this.users.channels[this.currentChannel].users).length
   }
-  messages = () => {
+  get messages(){
     if (this.users !== {}) return this.users.channels[this.currentChannel].totalMessages
   }
-  wordCount = () => {
+  get wordCount(){
     if (this.users !== {}) return this.users.channels[this.currentChannel].totalWordCount
   }
-  avgLength = () => {
+  get avgLength(){
     if (this.users !== {}) return (this.users.channels[this.currentChannel].totalWordCount
       /this.users.channels[this.currentChannel].totalMessages)
   }
-  avgSentiment = () => {
+  get avgSentiment(){
     if (this.users !== {}) return (this.users.channels[this.currentChannel].sentiment
       /this.users.channels[this.currentChannel].totalMessages)
   }
-  personality = () => {
+  get personality(){
     if (this.users !== {}) return this.users.insights
   }
 }

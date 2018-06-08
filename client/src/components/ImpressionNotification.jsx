@@ -2,7 +2,6 @@ import React from 'react'
 
 class ImpressionNotification extends React.Component {
   render() {
-    console.log(this.props.personality)
     return (
       <div className='ChannelList'>
         <h3 className='ChannelListTitle'>Impressions</h3>

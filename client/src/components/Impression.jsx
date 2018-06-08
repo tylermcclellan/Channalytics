@@ -29,7 +29,7 @@ class Impression extends React.Component {
         this.props.messageDump.join('\n')
       )
       m.seed(messages)
-      response = m.forward(m.pick(), 10).join(' ')
+      response = m.forward(m.pick(), 10).join(' ') + '...'
     } else {
       response = 'Not enough data.'
     }
