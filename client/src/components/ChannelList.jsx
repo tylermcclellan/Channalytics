@@ -5,8 +5,7 @@ import '../App.css'
 
 class ChannelList extends React.Component {
   render() {
-    const channelNames = this.props.channels
-    const listNames = channelNames.map( channel => 
+    const listNames = this.props.channels.map( channel => 
       <ChannelItem 
         key={channel} 
         channel={channel} 

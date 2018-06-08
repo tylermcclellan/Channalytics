@@ -24,7 +24,8 @@ class Dashboard extends React.Component {
     }
     this.handleChannelClick = this.handleChannelClick.bind(this)
   }
- 
+
+  //API call to backend
   async getUsers(){
     try {
       const response = await fetch(`/api/run/${this.props.uid}/`)
@@ -37,6 +38,7 @@ class Dashboard extends React.Component {
     }
   }
 
+  //API call to backend
   async getChannels(){
     try {
       const response = await fetch(`/api/channels/${this.props.uid}`)
@@ -56,6 +58,7 @@ class Dashboard extends React.Component {
     return chartArrs
   }
 
+  //updates information in PageBody when a channel name is clicked
   async handleChannelClick(e) {
     const channel = e.target.innerHTML
     const u = this.state.users
@@ -78,6 +81,7 @@ class Dashboard extends React.Component {
     })
   }
 
+  //Loading function
   async componentDidMount() {
     const currentChannel = this.state.currentChannel
     const u = await this.getUsers()
@@ -147,3 +151,4 @@ class Dashboard extends React.Component {
 }
 
 export default Dashboard
+

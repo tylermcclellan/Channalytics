@@ -29,21 +29,17 @@ app.use(passport.initialize())
 
 //Middleware
 const asyncRun = async (req, res, next) => {
-  const  u = await slack.getUserObject(token, req.uid)
-  req.data = u
+  req.data = await slack.getUserObject(token, req.uid)
   next()
 }
 
 const asyncChannels = async (req, res, next) => {
-  const channels = await slack.getChannelNames(token, req.uid)
-  req.data = channels
+  req.data = await slack.getChannelNames(token, req.uid)
   next()
 }
 
 const decrypt = (req, res, next) => {
-  const encrypted = req.params.uid
-  const decrypted = crypto.decrypt(encrypted)
-  req.uid = decrypted
+  req.uid = crypto.decrypt(req.params.uid)
   next()
 }
 
@@ -54,19 +50,17 @@ app.use(express.static(path.join(__dirname, 'client/build')))
 app.get('/auth/slack/callback',
   passport.authorize('slack', { failureRedirect: '/login' }),
   (req, res) => {
-    authed = true
-    const uid = crypto.encrypt(req.account.id)
-    res.redirect('http://channalytics.herokuapp.com/#/dashboard/?' + uid)
+    res.redirect('http://channalytics.herokuapp.com/#/dashboard/?' + crypto.encrypt(req.account.id))
   }
 )
 
 app.get('/api/run/:uid', decrypt, asyncRun, (req, res) => {
-  console.log("Returning user object")
+  console.log("Returning users")
   res.send(req.data)
 })
 
 app.get('/api/channels/:uid', decrypt, asyncChannels, (req, res) => {
-  console.log("Returning channel object")
+  console.log("Returning channels")
   res.send(req.data)
 })
 

@@ -7,7 +7,6 @@ const round = (value, decimals) => {
   return Number(Math.round(value+'e'+decimals)+'e-'+decimals)
 }
 
-
 class UserList extends React.Component {
   constructor(props) {
     super(props)
@@ -15,6 +14,8 @@ class UserList extends React.Component {
     this.handleSort = this.handleSort.bind(this)
   }
 
+  //Handles sorting the user list when a category title is clicked
+  //TODO: add in arrow icons to make sorting functionality more obvious
   handleSort(e){
     const rawText = e.target.innerHTML
     const loweredText = rawText.toLowerCase()
@@ -29,6 +30,7 @@ class UserList extends React.Component {
       default:
         break
     }
+    //TODO: fix weird sorting bug
     const userList = this.state.userList
     const sortedList = _.sortBy(userList, [item => item.props[sorter]])
     let list = sortedList
@@ -36,6 +38,7 @@ class UserList extends React.Component {
     this.setState({ userList: list })
   }
 
+  //Creates initial UserList from props
   static getDerivedStateFromProps(props, state){
     const userList = Object.keys(props.users)
     const mappedList = userList.map( u => {

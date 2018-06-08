@@ -63,6 +63,7 @@ const getChannelNames = async (token, uid) => {
       .filter(channel => channel.members.includes(uid))
       .map(channel => channel.name))
   } catch(e) {
+    console.log('Error getting channel names')
     console.log(e)
   }
 }
@@ -76,6 +77,7 @@ const getChannels = async (web, uid) => {
     const conversations = channels.channels.concat(groups.groups)
     return conversations.filter(channel => channel.members.includes(uid))
   } catch(e) {
+    console.log('Error getting channel objects')
     console.log(e)
   }
 }
@@ -145,20 +147,26 @@ const createUserObject = async (web, uid) => {
     master.channels = channelArr.reduce(reduceChannels, {})
     return master
   } catch(e) {
+    console.log('Error creating user object')
     console.log(e)
   }
 }
 
 //Removes stop words and mentions from message and puts message in lowercase
 const cleanMessage = message => {
-  return message.text
-    .split(" ")
-    .map(item => {
-      return item
-        .toLowerCase()
-        .replace(filterMessages(), '')
-    })
-    .filter(filterEmpty)
+  try {
+    return message.text
+      .split(" ")
+      .map(item => {
+        return item
+          .toLowerCase()
+          .replace(filterMessages(), '')
+      })
+      .filter(filterEmpty)
+  } catch(e) {
+    console.log('Error cleaning message')
+    console.log(e)
+  }
 }
 
 //async version of .forEach()
@@ -197,6 +205,7 @@ const getMessages = async (web, id, limit) => {
     }
     return messages
   } catch(e) {
+    console.log('Error getting messages')
     console.log(e)
   }
 }
@@ -237,6 +246,7 @@ const readConversation = async (web, u, limit=1000) => {
       })
     })
   } catch(e) {
+    console.log('Error reading conversation')
     console.log(e)
   }
 }
@@ -298,6 +308,7 @@ const analyze = async (u) => {
     })
     u.insights = await promisePersonality(u.users[u.uid].messageDump)
   } catch(e) {
+    console.log('Error analyzing messages')
     u.insights = undefined
     console.log(e)
   }
@@ -323,6 +334,7 @@ const run = async (token, uid) => {
     await analyze(userObject)
     return userObject
   } catch(e) {
+    console.log('Error in main driver')
     console.log(e)
   }
 }
