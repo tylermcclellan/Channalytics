@@ -15,7 +15,7 @@ class Impression extends React.Component {
   }
 
   //creates a markov chain from a user's raw messages and returns a walk of the chain
-  markov(){
+  markov = () => {
     let response
     if (this.props.messageDump.length > 35) {
       const m = Markov(2)

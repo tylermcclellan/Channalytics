@@ -19,7 +19,7 @@ const token = process.env.ACCESS_TOKEN
 passport.use(new SlackStrategy({
   clientID: CLIENT_ID,
   clientSecret: CLIENT_SECRET,
-  callbackURL: 'https://channalytics.herokuapp.com/auth/slack/callback'
+  callbackURL: 'http://localhost:5000/auth/slack/callback'
 }, (accessToken, scopes, team, {bot, incomingWebhook}, profile, done) => {
   done(null, profile.user)
 }))
@@ -49,7 +49,7 @@ app.use(express.static(path.join(__dirname, 'client/build')))
 app.get('/auth/slack/callback',
   passport.authorize('slack', { failureRedirect: '/login' }),
   (req, res) => {
-    res.redirect('https://channalytics.herokuapp.com/#/dashboard/?' + crypto.encrypt(req.account.id))
+    res.redirect('http://localhost:3000/#/dashboard/?' + crypto.encrypt(req.account.id))
   }
 )
 

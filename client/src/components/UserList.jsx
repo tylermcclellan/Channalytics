@@ -1,7 +1,6 @@
 import React from 'react'
 import { ListGroup, Row, Col } from 'react-bootstrap'
-import { observer } from 'mobx-react'
-import store from '../stores/AppStore'
+import { observer, inject } from 'mobx-react'
 
 class UserList extends React.Component {
   constructor(props) {
@@ -27,7 +26,7 @@ class UserList extends React.Component {
         break
     }
     //TODO: fix weird sorting bug
-    store.setSorter(sorter)
+    this.props.myStore.setSorter(sorter)
   }
 
   render() {
@@ -54,11 +53,11 @@ class UserList extends React.Component {
           </Col>
         </Row>
         <Row>
-          <ListGroup className='UserList'>{store.userList}</ListGroup>
+          <ListGroup className='UserList'>{this.props.myStore.userList}</ListGroup>
         </Row>
       </div>
     )
   }
 }
 
-export default observer(UserList)
+export default inject('myStore')(observer(UserList))

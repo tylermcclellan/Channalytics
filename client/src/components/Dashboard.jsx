@@ -8,8 +8,7 @@ import Sidebar from './Sidebar'
 import PageBody from './PageBody'
 import Header from './Header'
 import LoadingPage from './LoadingPage'
-import store from '../stores/AppStore'
-import { observer } from 'mobx-react'
+import { observer, inject } from 'mobx-react'
 import '../App.css'
 
 class Dashboard extends React.Component {
@@ -44,14 +43,14 @@ class Dashboard extends React.Component {
 
   //updates current channel in store when a channel name is clicked
   handleChannelClick(e) {
-    store.setCurrentChannel(e.target.innerHTML)
+    this.props.myStore.setCurrentChannel(e.target.innerHTML)
   }
 
-  //Initializes store with users and channels
+  //Initializes this.props.myStore with users and channels
   async componentDidMount() {
     const u = await this.getUsers()
     const c = await this.getChannels()
-    store.initStore({
+    this.props.myStore.initStore({
       users: u,
       channelList: c,
       loaded: true
@@ -59,35 +58,35 @@ class Dashboard extends React.Component {
   }
 
   render() {
-    const loading = store.loaded ? false : true
-    const requestSuccess = store.personality !== undefined ? true : false
+    const loading = this.props.myStore.loaded ? false : true
+    const requestSuccess = this.props.myStore.personality !== undefined ? true : false
     return (
       <div className='App'>
       { loading ? (
         <LoadingPage/>
       ) : (
         <div>
-          <Header currentChannel={store.currentChannel}/>
+          <Header currentChannel={this.props.myStore.currentChannel}/>
           <Grid>
             <Row>
               <Col md={3} lg={3}>
                 <Sidebar
-                  channels={store.channelList} 
+                  channels={this.props.myStore.channelList} 
                   handleClick={this.handleChannelClick}
-                  personality={store.personality} 
+                  personality={this.props.myStore.personality} 
                   showPersonality={requestSuccess}/>
               </Col>
               <Col md={9} lg={9} >
                 <PageBody
-                  users={store.currentUsers}
-                  globalUsers={store.globalUsers}
-                  names={store.chart.names} 
-                  numbers={store.chart.numbers} 
-                  messages={store.messages}
-                  words={store.wordCount}
-                  numUsers={store.numUsers}
-                  avgLength={store.avgLength}
-                  avgSentiment={store.avgSentiment}/>
+                  users={this.props.myStore.currentUsers}
+                  globalUsers={this.props.myStore.globalUsers}
+                  names={this.props.myStore.chart.names} 
+                  numbers={this.props.myStore.chart.numbers} 
+                  messages={this.props.myStore.messages}
+                  words={this.props.myStore.wordCount}
+                  numUsers={this.props.myStore.numUsers}
+                  avgLength={this.props.myStore.avgLength}
+                  avgSentiment={this.props.myStore.avgSentiment}/>
               </Col>
             </Row>
           </Grid>
@@ -98,5 +97,5 @@ class Dashboard extends React.Component {
   }
 }
 
-export default observer(Dashboard)
+export default inject('myStore')(observer(Dashboard))
 
