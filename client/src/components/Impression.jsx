@@ -9,9 +9,7 @@ import {
 class Impression extends React.Component {
   constructor(props, context) {
     super(props, context)
-
-    this.state = { show: false }
-
+    this.state = { content: '' }
     this.handleClick = this.handleClick.bind(this)
     this.markov = this.markov.bind(this)
   }
@@ -36,7 +34,7 @@ class Impression extends React.Component {
 
   //Handles creating a markov chain when user icon is pressed
   handleClick = e => {
-    const content = markov() 
+    const content = this.markov() 
     this.setState({ 
       content: content
     })

@@ -1,16 +1,11 @@
 import React from 'react'
-import UserItem from './UserItem'
 import { ListGroup, Row, Col } from 'react-bootstrap'
-const _ = require('lodash')
-
-const round = (value, decimals) => {
-  return Number(Math.round(value+'e'+decimals)+'e-'+decimals)
-}
+import { observer } from 'mobx-react'
+import store from '../stores/AppStore'
 
 class UserList extends React.Component {
   constructor(props) {
     super(props)
-    this.state = { userList: [] }
     this.handleSort = this.handleSort.bind(this)
   }
 
@@ -18,52 +13,21 @@ class UserList extends React.Component {
   //TODO: add in arrow icons to make sorting functionality more obvious
   handleSort(e){
     let sorter = e.target.innerHTML.toLowerCase()
-    switch(loweredText) {
+    switch(sorter) {
       case 'percentage':
         sorter = 'percent'
         break
       case 'user':
         sorter = 'name'
         break
+      case 'words':
+        sorter = 'numWords'
+        break
       default:
         break
     }
     //TODO: fix weird sorting bug
-    let list = _.sortBy(this.state.userList, [item => item.props[sorter]])
-    if (sorter !== 'name') list = list.reverse()
-    this.setState({ userList: list })
-  }
-
-  //Creates initial UserList from props
-  static getDerivedStateFromProps(props, state){
-    const userList = Object.keys(props.users)
-    const mappedList = userList.map( u => {
-      const user = props.users[u]
-      const messageDump = props.globalUsers[u].messageDump
-      const rawSource = user.profile.image_48
-      const source = rawSource.replace(`\\`, ``)
-      const name = user.real_name
-      const percent = round(user.numMessages/props.messages*100, 2)
-      const messages = user.numMessages
-      const numWords = user.numWords
-      let unique = user.uniqueWords.map( 
-        word => word !== user.uniqueWords[user.uniqueWords.length-1] ? `${word}, ` : `${word}`
-      )
-      const sentiment = round(user.sentiment/user.numMessages, 4)
-      
-      return <UserItem 
-        key={u}
-        img={source}
-        name={name}
-        messageDump={messageDump}
-        percent={percent}
-        messages={messages}
-        words={user.words}
-        numWords={numWords}
-        unique={unique} 
-        sentiment={sentiment}/>
-      })
-    return { userList: mappedList }
+    store.setSorter(sorter)
   }
 
   render() {
@@ -90,11 +54,11 @@ class UserList extends React.Component {
           </Col>
         </Row>
         <Row>
-          <ListGroup className='UserList'>{this.state.userList}</ListGroup>
+          <ListGroup className='UserList'>{store.userList}</ListGroup>
         </Row>
       </div>
     )
   }
 }
 
-export default UserList
+export default observer(UserList)

@@ -8,7 +8,6 @@ import Impression from './Impression'
 
 class UserItem extends React.Component {
   render() {
-    const filler = <Impression messageDump={this.props.messageDump} />
     return (
       <ListGroupItem>
           <Row>
