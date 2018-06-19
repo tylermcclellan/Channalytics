@@ -1,10 +1,10 @@
-import React from 'react'
-import ChannelList from './ChannelList'
-import Watson from './Watson'
 import ChannelInfo from './ChannelInfo'
+import ChannelList from './ChannelList'
 import PieChart from './PieChart'
-import { inject, observer } from 'mobx-react'
+import React from 'react'
+import Watson from './Watson'
 import { Row, Col } from 'react-bootstrap'
+import { inject, observer } from 'mobx-react'
 
 const Top = (props) => {
   return (
@@ -23,11 +23,11 @@ const Top = (props) => {
       <Col md={9} lg={9}>
         <PieChart 
           labels={props.store.chart.names}
+          title={"User Participation"}
           values={props.store.chart.numbers}
           x={1.25}
           y={1.25}
-          title={"User Participation"}
-          />
+        />
       </Col>
     </Row>
   )

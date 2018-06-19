@@ -1,14 +1,14 @@
 import React from 'react'
 import { 
-  ListGroupItem, 
+  Col, 
   Image,
-  Row, 
-  Col 
+  ListGroupItem, 
+  Row 
 } from 'react-bootstrap'
 import { inject, observer } from 'mobx-react'
 
 class UserItem extends React.Component {
-  constructor(props) {
+  constructor(props){
     super(props)
     this.handleClick = this.handleClick.bind(this)
   }
@@ -17,15 +17,15 @@ class UserItem extends React.Component {
     this.props.store.setUserName(this.props.id)
   }
 
-  render() {
+  render(){
     return (
       <ListGroupItem onClick={this.handleClick}>
           <Row>
             <Col md={1} lg={1}>
               <Image 
-                src={this.props.img}
                 alt="Image not found"
                 rounded
+                src={this.props.img}
               />
             </Col>
             <Col md={2} lg={2}>

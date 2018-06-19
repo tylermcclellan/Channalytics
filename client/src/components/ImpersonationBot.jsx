@@ -1,9 +1,9 @@
+import ImpersonationStore from '../stores/ImpersonationStore'
 import React from 'react'
 import { inject, observer } from 'mobx-react'
-import ImpersonationStore from '../stores/ImpersonationStore'
 
 class ImpersonationBot extends React.Component {
-  constructor(props) {
+  constructor(props){
     super(props)
     this.handleClick = this.handleClick.bind(this)
   }
@@ -12,7 +12,7 @@ class ImpersonationBot extends React.Component {
     ImpersonationStore.markov(this.props.store.users.users[this.props.store.userName].messageDump)
   }
 
-  render() {
+  render(){
     return (
       <div>
         <span>

@@ -1,8 +1,8 @@
+import '../App.css'
+import ChannelItem from './ChannelItem'
 import React from 'react'
 import { ListGroup } from 'react-bootstrap'
-import ChannelItem from './ChannelItem'
 import { inject, observer } from 'mobx-react'
-import '../App.css'
 
 const ChannelList = (props) => {
   const listNames = props.store.channelList.map( channel => 

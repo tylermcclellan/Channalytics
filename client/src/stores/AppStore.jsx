@@ -15,19 +15,6 @@ class AppStore {
   loaded = false
   sorter = 'name'
   userName = null
-  chatbox = []
-
-  async getUsers(uid){
-    try {
-      const response = await fetch(`/api/run/${uid}/`)
-      const body = await response.json()
-      if (response.status !== 200) throw Error(body.message)
-      return body
-    } catch(e) {
-      console.log('STORE: Error getting users')
-      console.log(e)
-    }
-  }
 
   async getChannels(uid){
     try {
@@ -41,20 +28,44 @@ class AppStore {
     }
   }
 
+  async getUsers(uid){
+    try {
+      const response = await fetch(`/api/run/${uid}/`)
+      const body = await response.json()
+      if (response.status !== 200) throw Error(body.message)
+      return body
+    } catch(e) {
+      console.log('STORE: Error getting users')
+      console.log(e)
+    }
+  }
+
   async initStore(uid){
     this.users = await this.getUsers(uid)
     this.channelList = await this.getChannels(uid)
     this.loaded = true
   }
+
   setCurrentChannel(channel){
     this.currentChannel = channel
   }
+
   setSorter(sorter){
     if (this.sorter !== sorter) this.sorter = sorter
   }
+
   setUserName(userName){
     this.userName = userName
   }
+
+  get avgLength(){
+    if (this.users !== {}) return round(this.users.channels[this.currentChannel].totalWordCount/this.users.channels[this.currentChannel].totalMessages, 2)
+  }
+
+  get avgSentiment(){
+    if (this.users !== {}) return round(this.users.channels[this.currentChannel].sentiment/this.users.channels[this.currentChannel].totalMessages, 2)
+  }
+
   get chart(){
     if (this.users !== {}) {
       const userKeys = Object.keys(this.users.channels[this.currentChannel].users)
@@ -65,32 +76,27 @@ class AppStore {
       return chartArrs
     }
   }
-  get globalUsers(){
-    if (this.users !== {}) return this.users.users
-  }
+
   get currentUsers(){
     if (this.users !== {}) return this.users.channels[this.currentChannel].users
   }
-  get numUsers(){
-    if (this.users !== {}) return Object.keys(this.users.channels[this.currentChannel].users).length
+
+  get globalUsers(){
+    if (this.users !== {}) return this.users.users
   }
+
   get messages(){
     if (this.users !== {}) return this.users.channels[this.currentChannel].totalMessages
   }
-  get wordCount(){
-    if (this.users !== {}) return this.users.channels[this.currentChannel].totalWordCount
+
+  get numUsers(){
+    if (this.users !== {}) return Object.keys(this.users.channels[this.currentChannel].users).length
   }
-  get avgLength(){
-    if (this.users !== {}) return round(this.users.channels[this.currentChannel].totalWordCount
-      /this.users.channels[this.currentChannel].totalMessages, 2)
-  }
-  get avgSentiment(){
-    if (this.users !== {}) return round(this.users.channels[this.currentChannel].sentiment
-      /this.users.channels[this.currentChannel].totalMessages, 2)
-  }
+
   get personality(){
     if (this.users !== {}) return this.users.insights
   }
+
   get userList(){
     if (this.users !== {}) {
       const userList = Object.keys(this.users.channels[this.currentChannel].users)
@@ -125,6 +131,7 @@ class AppStore {
       return list
     }
   }
+
   participation(){
     let labels = []
     this.channelList.forEach(label => {
@@ -139,6 +146,7 @@ class AppStore {
       values: values
     }
   }
+
   pos(){
     const taggedWords = new POS.Tagger()
       .tag(new POS.Lexer()
@@ -157,6 +165,7 @@ class AppStore {
       values: values
     }
   }
+
   get userProfile(){
     if (this.userName !== null) {
       const profile = {
@@ -167,6 +176,10 @@ class AppStore {
       return profile
     }
   }
+
+  get wordCount(){
+    if (this.users !== {}) return this.users.channels[this.currentChannel].totalWordCount
+  }
 }
 
 decorate(AppStore, {
@@ -176,7 +189,6 @@ decorate(AppStore, {
   loaded: observable,
   sorter: observable,
   userName: observable,
-  chatbox: observable,
   initStore: action,
   setCurrentChannel: action,
   setSorter: action,

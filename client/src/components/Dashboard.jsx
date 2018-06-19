@@ -1,12 +1,12 @@
-import React from 'react'
-import { Grid } from 'react-bootstrap'
-import Top from './Top'
+import '../App.css'
 import Bottom from './Bottom'
-import ProfilePage from './ProfilePage'
 import Header from './Header'
 import LoadingPage from './LoadingPage'
+import ProfilePage from './ProfilePage'
+import React from 'react'
+import Top from './Top'
+import { Grid } from 'react-bootstrap'
 import { observer, inject } from 'mobx-react'
-import '../App.css'
 
 class Dashboard extends React.Component {
   constructor(props) {
@@ -49,14 +49,10 @@ class Dashboard extends React.Component {
         <div>
           <Header onClick={this.handleClickHome}/>
           <ProfilePage />
-         </div>
+        </div>
       )
     }
-    return (
-      <div className='App'>
-        {content}
-      </div>
-    )
+    return content
   }
 }
 

@@ -3,7 +3,7 @@ import { ListGroup, Row, Col } from 'react-bootstrap'
 import { observer, inject } from 'mobx-react'
 
 class UserList extends React.Component {
-  constructor(props) {
+  constructor(props){
     super(props)
     this.handleSort = this.handleSort.bind(this)
   }
