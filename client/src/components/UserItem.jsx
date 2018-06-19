@@ -1,18 +1,32 @@
 import React from 'react'
 import { 
   ListGroupItem, 
+  Image,
   Row, 
   Col 
 } from 'react-bootstrap'
-import Impression from './Impression'
+import { inject, observer } from 'mobx-react'
 
 class UserItem extends React.Component {
+  constructor(props) {
+    super(props)
+    this.handleClick = this.handleClick.bind(this)
+  }
+
+  handleClick = () => {
+    this.props.store.setUserName(this.props.id)
+  }
+
   render() {
     return (
-      <ListGroupItem>
+      <ListGroupItem onClick={this.handleClick}>
           <Row>
             <Col md={1} lg={1}>
-              <Impression img={this.props.img} messageDump={this.props.messageDump} />
+              <Image 
+                src={this.props.img}
+                alt="Image not found"
+                rounded
+              />
             </Col>
             <Col md={2} lg={2}>
               <span>{this.props.name}</span> 
@@ -40,5 +54,4 @@ class UserItem extends React.Component {
   }
 }
 
-export default UserItem
-
+export default inject('store')(observer(UserItem))

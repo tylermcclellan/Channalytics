@@ -27,7 +27,7 @@
 .ChannelListTitle {
   padding-top: 10px;
   padding-right: 15px;
-  align-text: center;
+  text-align: center;
 }
 
 #main {
@@ -36,7 +36,7 @@
 
 .Jumbotron {
   background-color: #938e94;
-  align-text: center;
+  text-align: center;
   font-size: 2em;
   padding: 20px;
   font-family: 'Roboto Mono', monospace;

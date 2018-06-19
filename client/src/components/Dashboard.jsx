@@ -1,11 +1,8 @@
 import React from 'react'
-import { 
-  Grid,
-  Row,
-  Col
-} from 'react-bootstrap'
-import Sidebar from './Sidebar'
-import PageBody from './PageBody'
+import { Grid } from 'react-bootstrap'
+import Top from './Top'
+import Bottom from './Bottom'
+import ProfilePage from './ProfilePage'
 import Header from './Header'
 import LoadingPage from './LoadingPage'
 import { observer, inject } from 'mobx-react'
@@ -15,87 +12,52 @@ class Dashboard extends React.Component {
   constructor(props) {
     super(props)
     this.handleChannelClick = this.handleChannelClick.bind(this)
+    this.handleClickHome = this.handleClickHome.bind(this)
   }
 
-  //API call to get users from backend
-  async getUsers(){
-    try {
-      const response = await fetch(`/api/run/${this.props.uid}/`)
-      const body = await response.json()
-      if (response.status !== 200) throw Error(body.message)
-      return body
-    } catch(e) {
-      console.log(e)
-    }
-  }
-
-  //API call to get channel list from backend
-  async getChannels(){
-    try {
-      const response = await fetch(`/api/channels/${this.props.uid}`)
-      const body = await response.json()
-      if (response.status !== 200) throw Error(body.message)
-      return body
-    } catch(e) {
-      console.log(e)
-    }
+  //sets the page back to Dashboard
+  handleClickHome(){
+    this.props.store.setUserName(null)
   }
 
   //updates current channel in store when a channel name is clicked
   handleChannelClick(e) {
-    this.props.myStore.setCurrentChannel(e.target.innerHTML)
+    this.props.store.setCurrentChannel(e.target.innerHTML)
   }
 
-  //Initializes this.props.myStore with users and channels
+  //Initializes store with users and channels
   async componentDidMount() {
-    const u = await this.getUsers()
-    const c = await this.getChannels()
-    this.props.myStore.initStore({
-      users: u,
-      channelList: c,
-      loaded: true
-    })
+    await this.props.store.initStore(this.props.uid)
   }
 
   render() {
-    const loading = this.props.myStore.loaded ? false : true
-    const requestSuccess = this.props.myStore.personality !== undefined ? true : false
-    return (
-      <div className='App'>
-      { loading ? (
-        <LoadingPage/>
-      ) : (
+    let content
+    if (!this.props.store.loaded){
+      content = <LoadingPage/>
+    } else if (this.props.store.userName === null){
+      content = (
         <div>
-          <Header currentChannel={this.props.myStore.currentChannel}/>
+          <Header style={{cursor: "pointer"}} onClick={this.handleClickHome}/>
           <Grid>
-            <Row>
-              <Col md={3} lg={3}>
-                <Sidebar
-                  channels={this.props.myStore.channelList} 
-                  handleClick={this.handleChannelClick}
-                  personality={this.props.myStore.personality} 
-                  showPersonality={requestSuccess}/>
-              </Col>
-              <Col md={9} lg={9} >
-                <PageBody
-                  users={this.props.myStore.currentUsers}
-                  globalUsers={this.props.myStore.globalUsers}
-                  names={this.props.myStore.chart.names} 
-                  numbers={this.props.myStore.chart.numbers} 
-                  messages={this.props.myStore.messages}
-                  words={this.props.myStore.wordCount}
-                  numUsers={this.props.myStore.numUsers}
-                  avgLength={this.props.myStore.avgLength}
-                  avgSentiment={this.props.myStore.avgSentiment}/>
-              </Col>
-            </Row>
+            <Top handleClick={this.handleChannelClick} />
+            <Bottom />
           </Grid>
         </div>
-        )}
+      )
+    } else {
+      content = (
+        <div>
+          <Header onClick={this.handleClickHome}/>
+          <ProfilePage />
+         </div>
+      )
+    }
+    return (
+      <div className='App'>
+        {content}
       </div>
     )
   }
 }
 
-export default inject('myStore')(observer(Dashboard))
-
+export default inject('store')(observer(Dashboard))

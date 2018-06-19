@@ -15,7 +15,7 @@ export class MainRouter extends React.Component {
   render() {
     const token = getToken()
     return (
-      <Provider myStore={AppStore}>
+      <Provider store={AppStore}>
         <Switch>
           <Redirect exact from='/' to='/login' />
           <Route 

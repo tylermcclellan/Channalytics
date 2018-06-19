@@ -26,7 +26,7 @@ class UserList extends React.Component {
         break
     }
     //TODO: fix weird sorting bug
-    this.props.myStore.setSorter(sorter)
+    this.props.store.setSorter(sorter)
   }
 
   render() {
@@ -53,11 +53,11 @@ class UserList extends React.Component {
           </Col>
         </Row>
         <Row>
-          <ListGroup className='UserList'>{this.props.myStore.userList}</ListGroup>
+          <ListGroup className='UserList'>{this.props.store.userList}</ListGroup>
         </Row>
       </div>
     )
   }
 }
 
-export default inject('myStore')(observer(UserList))
+export default inject('store')(observer(UserList))

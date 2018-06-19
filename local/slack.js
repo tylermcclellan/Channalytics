@@ -34,6 +34,18 @@ class Channel {
   }
 }
 
+class Master {
+  constructor() {
+    this.id = ''
+    this.real_name = ''
+    this.profile = {}
+    this.numMessages = 0
+    this.numWords = 0
+    this.sentiment = 0
+    this.messageDump = []
+  }
+}
+
 class User {
   constructor() {
     this.id = ''
@@ -44,7 +56,6 @@ class User {
     this.numWords = 0
     this.sentiment = 0
     this.uniqueWords = []
-    this.messageDump = []
   }
 }
 
@@ -56,12 +67,10 @@ const getChannelNames = async (token, uid) => {
     const web = createWebClient(token)
     const channels = await web.channels.list()
     const groups = await web.groups.list()
-    const list = channels.channels
+    return channels.channels
       .concat(groups.groups)
-      .filter(channel => channel.is_mpim === false)
-    return (list
-      .filter(channel => channel.members.includes(uid))
-      .map(channel => channel.name))
+      .filter(channel => !channel.is_mpim && channel.members.includes(uid))
+      .map(channel => channel.name)
   } catch(e) {
     console.log('Error getting channel names')
     console.log(e)
@@ -75,7 +84,7 @@ const getChannels = async (web, uid) => {
     const channels = await web.channels.list()
     const groups = await web.groups.list()
     const conversations = channels.channels.concat(groups.groups)
-    return conversations.filter(channel => channel.members.includes(uid))
+    return conversations.filter(channel => channel.members.includes(uid) && !channel.is_mpim)
   } catch(e) {
     console.log('Error getting channel objects')
     console.log(e)
@@ -108,6 +117,14 @@ const reduceUsers = (accumulator, currentValue) => {
   return accumulator
 }
 
+const reduceMaster = (accumulator, currentValue) => {
+  accumulator[currentValue.id] = new Master
+  accumulator[currentValue.id].real_name = currentValue.real_name
+  accumulator[currentValue.id].id = currentValue.id
+  accumulator[currentValue.id].profile = currentValue.profile
+  return accumulator
+}
+
 const reduceChannels = (accumulator, currentValue) => {
   accumulator[currentValue.name] = currentValue
   return accumulator
@@ -130,11 +147,10 @@ const createUserObject = async (web, uid) => {
     let master = {
       channels: {},
       users: {},
-      messageDump: '',
       insights: [],
       uid: uid
     }
-    master.users = filteredList.reduce(reduceUsers, {})
+    master.users = filteredList.reduce(reduceMaster, {})
     const channelArr = channels.map(channel => {
       let c = new Channel
       c.name = channel.name
@@ -226,6 +242,8 @@ const readConversation = async (web, u, limit=1000) => {
           const words = cleanMessage(message)
           u.channels[channel].users[message.user].numMessages += 1
           u.channels[channel].users[message.user].sentiment += messageSentiment
+          u.users[message.user].numMessages += 1
+          u.users[message.user].sentiment += messageSentiment
           u.channels[channel].totalMessages += 1
           u.channels[channel].sentiment += messageSentiment
           words.forEach( word => {
@@ -240,6 +258,7 @@ const readConversation = async (web, u, limit=1000) => {
               u.channels[channel].totalWords[word] += 1
             }
             u.channels[channel].users[message.user].numWords += 1
+            u.users[message.user].numWords += 1
             u.channels[channel].totalWordCount += 1
           })
         }
